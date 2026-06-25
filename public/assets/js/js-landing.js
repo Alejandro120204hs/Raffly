@@ -3,6 +3,9 @@ const fadeObserver = new IntersectionObserver(entries => {
     entries.forEach(e => {
         if (e.isIntersecting) {
             e.target.classList.add('in');
+            e.target.addEventListener('transitionend', () => {
+                e.target.style.transitionDelay = '0ms';
+            }, { once: true });
             fadeObserver.unobserve(e.target);
         }
     });

@@ -35,19 +35,20 @@
 }">
 
 {{-- ══════════════ NAVBAR ══════════════ --}}
-<nav class="navbar" :class="{ 'scrolled': nav }">
+<nav class="navbar" x-bind:class="{ 'scrolled': nav }">
     <div class="container">
         <div class="nav-inner">
             <a href="{{ route('home') }}" class="nav-logo">
-                <div class="logo-box"><i class="fas fa-ticket"></i></div>
+             
                 {{ config('app.name', 'Raffly') }}
             </a>
 
             <ul class="nav-links">
-                <li><a href="#rifas">Rifas Activas</a></li>
+                <li><a href="#primeros">Sé el Primero</a></li>
+                 <li><a href="#faq">Preguntas</a></li>
+                <li><a href="#beneficios">Confianza</a></li>
                 <li><a href="#como-funciona">Cómo Funciona</a></li>
-                <li><a href="#ganadores">Ganadores</a></li>
-                <li><a href="#estadisticas">Estadísticas</a></li>
+               
             </ul>
 
             <div class="nav-actions">
@@ -63,7 +64,7 @@
                         <a href="{{ route('register') }}" class="nav-register">Registrarse</a>
                     @endif
                 @endauth
-                <button class="nav-toggle" @click="mob = true" aria-label="Abrir menú">
+                <button class="nav-toggle" x-on:click="mob = true" aria-label="Abrir menú">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -72,14 +73,14 @@
 </nav>
 
 {{-- MOBILE MENU --}}
-<div class="mobile-overlay" :class="{ 'open': mob }">
-    <button class="mobile-close" @click="mob = false" aria-label="Cerrar menú">
+<div class="mobile-overlay" x-bind:class="{ 'open': mob }">
+    <button class="mobile-close" x-on:click="mob = false" aria-label="Cerrar menú">
         <i class="fas fa-times"></i>
     </button>
-    <a href="#rifas"         @click="mob = false">Rifas Activas</a>
-    <a href="#como-funciona" @click="mob = false">Cómo Funciona</a>
-    <a href="#ganadores"     @click="mob = false">Ganadores</a>
-    <a href="#estadisticas"  @click="mob = false">Estadísticas</a>
+    <a href="#primeros"      x-on:click="mob = false">Sé el Primero</a>
+    <a href="#beneficios"    x-on:click="mob = false">Confianza</a>
+    <a href="#como-funciona" x-on:click="mob = false">Cómo Funciona</a>
+    <a href="#faq"           x-on:click="mob = false">Preguntas</a>
     <div class="mobile-divider"></div>
     @auth
         <a href="{{ url('/dashboard') }}" style="background:var(--primary);border-radius:.5rem;font-weight:700;">Mi Panel</a>
@@ -129,128 +130,108 @@
 
             {{-- Tarjetas flotantes --}}
             <div class="hero-visual hero-cards">
-                @php $previewRifas = $rifasActivas->take(3); @endphp
-                @if($previewRifas->isNotEmpty())
-                    @foreach($previewRifas as $pr)
-                    <div class="fc">
-                        <div class="fc-top">
-                            <div class="fc-icon" style="background:linear-gradient(135deg,var(--primary),var(--secondary))">
-                                <i class="fas fa-gift"></i>
-                            </div>
-                            <div>
-                                <div class="fc-name">{{ Str::limit($pr->nombre, 28) }}</div>
-                                <div class="fc-price">${{ number_format($pr->precio_numero) }} / número</div>
-                            </div>
-                        </div>
-                        <div class="fc-bar"><div class="fc-fill" style="width:{{ $pr->porcentaje_vendido }}%"></div></div>
-                        <div class="fc-labels">
-                            <span>{{ $pr->numeros_vendidos }} vendidos</span>
-                            <span>{{ $pr->numeros_disponibles }} disponibles</span>
-                        </div>
-                    </div>
-                    @endforeach
-                @else
-                    <div class="fc">
-                        <div class="fc-top">
-                            <div class="fc-icon" style="background:linear-gradient(135deg,var(--primary),var(--secondary))"><i class="fas fa-mobile-alt"></i></div>
-                            <div><div class="fc-name">iPhone 15 Pro Max</div><div class="fc-price">$5,000 / número</div></div>
-                        </div>
-                        <div class="fc-bar"><div class="fc-fill" style="width:73%"></div></div>
-                        <div class="fc-labels"><span>73 vendidos</span><span>27 disponibles</span></div>
-                    </div>
-                    <div class="fc">
-                        <div class="fc-top">
-                            <div class="fc-icon" style="background:linear-gradient(135deg,#059669,#10B981)"><i class="fas fa-laptop"></i></div>
-                            <div><div class="fc-name">MacBook Pro M3</div><div class="fc-price">$8,000 / número</div></div>
-                        </div>
-                        <div class="fc-bar"><div class="fc-fill" style="width:45%"></div></div>
-                        <div class="fc-labels"><span>36 vendidos</span><span>44 disponibles</span></div>
-                    </div>
-                    <div class="fc">
-                        <div class="fc-top">
-                            <div class="fc-icon" style="background:linear-gradient(135deg,#DC2626,#EF4444)"><i class="fas fa-gamepad"></i></div>
-                            <div><div class="fc-name">PlayStation 5</div><div class="fc-price">$3,000 / número</div></div>
-                        </div>
-                        <div class="fc-bar"><div class="fc-fill" style="width:59%"></div></div>
-                        <div class="fc-labels"><span>89 vendidos</span><span>61 disponibles</span></div>
-                    </div>
-                @endif
-            </div>
+                <div class="fc"><div class="fc-motto-only">🏆 Las mejores rifas, los mejores premios</div></div>
+                <div class="fc"><div class="fc-motto-only">🔥 Rifas exclusivas · Premios que cambian vidas</div></div>
+                <div class="fc"><div class="fc-motto-only">🎯 Tu próximo premio está a un número de distancia</div></div>
+            </div>{{-- /.hero-cards --}}
 
         </div>
     </div>
 </section>
 
-{{-- ══════════════ RIFAS ACTIVAS ══════════════ --}}
-<section class="section" id="rifas">
+{{-- ══════════════ SÉ DE LOS PRIMEROS ══════════════ --}}
+<section class="section early-section" id="primeros">
+    <div class="container">
+        <div class="early-wrap fade-up">
+            <div class="badge badge-purple"><i class="fas fa-star"></i> Acceso Anticipado</div>
+            <h2 class="section-title">Sé de los <span class="gold">Primeros</span> en Participar</h2>
+            <p class="section-sub">Únete a Raffly y disfruta de una experiencia fácil, segura y transparente. Regístrate gratis y recibe novedades sobre nuevos sorteos, promociones y oportunidades para participar.</p>
+
+            <div class="early-perks">
+                <div class="early-perk">
+                    <div class="early-perk-icon"><i class="fas fa-bell"></i></div>
+                    <span>Notificación inmediata cuando abramos nuevas rifas</span>
+                </div>
+                <div class="early-perk">
+                    <div class="early-perk-icon"><i class="fas fa-tag"></i></div>
+                    <span>Acceso a promociones exclusivas de lanzamiento</span>
+                </div>
+                <div class="early-perk">
+                    <div class="early-perk-icon"><i class="fas fa-trophy"></i></div>
+                    <span>Participa en los primeros sorteos con premios reales</span>
+                </div>
+            </div>
+
+            @if (Route::has('register'))
+            <a href="{{ route('register') }}" class="btn btn-gold">
+                <i class="fas fa-rocket"></i> Registrarme Ahora — Es Gratis
+            </a>
+            @endif
+            
+        </div>
+    </div>
+</section>
+
+{{-- ══════════════ FAQ ══════════════ --}}
+<section class="section faq-section" id="faq">
     <div class="container">
         <div class="section-header fade-up">
-            <div class="badge badge-purple"><i class="fas fa-fire"></i> En Curso</div>
-            <h2 class="section-title">Rifas Activas</h2>
-            <p class="section-sub">Elige tu rifa favorita y adquiere tus números antes de que se agoten. ¡Los premios son reales y los sorteos verificables!</p>
+            <div class="badge badge-purple"><i class="fas fa-question-circle"></i> FAQ</div>
+            <h2 class="section-title">Preguntas Frecuentes</h2>
+            <p class="section-sub">Todo lo que necesitas saber antes de participar.</p>
         </div>
 
-        <div class="rifas-grid">
-            @forelse($rifasActivas as $index => $rifa)
-            <div class="rifa-card fade-up delay-{{ min($index + 1, 5) }}">
-                @if($rifa->imagen)
-                    <img class="rifa-thumb" src="{{ $rifa->imagen }}" alt="{{ $rifa->nombre }}" loading="lazy">
-                @else
-                    <div class="rifa-thumb-ph"><i class="fas fa-coins"></i></div>
-                @endif
+        <div class="faq-list fade-up" x-data="{ open: null }">
 
-                <div class="rifa-body">
-                    <span class="rifa-status"><span class="dot"></span> Activa</span>
-                    <div class="rifa-name">{{ $rifa->nombre }}</div>
-                    @if($rifa->premio_descripcion)
-                        <div class="rifa-premio">
-                            <i class="fas fa-trophy" style="color:var(--secondary);margin-right:.3rem"></i>
-                            {{ $rifa->premio_descripcion }}
-                        </div>
-                    @endif
-                    <div class="rifa-price">${{ number_format($rifa->precio_numero) }} <small>/ número</small></div>
-
-                    <div class="progress-wrap">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:{{ $rifa->porcentaje_vendido }}%"></div>
-                        </div>
-                        <div class="progress-labels">
-                            <span>{{ $rifa->numeros_vendidos }} vendidos ({{ $rifa->porcentaje_vendido }}%)</span>
-                            <span>{{ $rifa->numeros_disponibles }} disp.</span>
-                        </div>
-                    </div>
-
-                    <div class="rifa-date">
-                        <i class="fas fa-calendar-alt"></i>
-                        Sorteo: {{ $rifa->fecha_sorteo->format('d/m/Y') }}
-                    </div>
-                </div>
-
-                <div class="rifa-footer">
-                    <a href="{{ route('register') }}" class="rifa-btn">
-                        <i class="fas fa-ticket-alt"></i> Ver Detalles
-                    </a>
-                </div>
+            <div class="faq-item" x-bind:class="open === 1 ? 'faq-open' : ''">
+                <button class="faq-q" x-on:click="open = open === 1 ? null : 1">
+                    <span>¿Cómo sé que el sorteo es real y transparente?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-a">Todos nuestros sorteos se realizan de manera transparente y segura. Los números ganadores son determinados mediante la lotería correspondiente a cada sorteo, garantizando un proceso confiable y verificable. Los resultados quedan publicados permanentemente en la plataforma para que cualquier persona pueda consultarlos.</div>
             </div>
-            @empty
-            <div class="empty-state fade-up">
-                <div class="es-icon"><i class="fas fa-ticket-alt"></i></div>
-                <h3>Próximamente nuevas rifas</h3>
-                <p>Estamos preparando premios increíbles. ¡Regístrate para ser el primero en enterarte!</p>
-                <a href="{{ route('register') }}" class="btn btn-purple">
-                    <i class="fas fa-bell"></i> Notificarme
-                </a>
-            </div>
-            @endforelse
-        </div>
 
-        @if($rifasActivas->count() >= 6)
-        <div style="text-align:center;margin-top:2.5rem;">
-            <a href="{{ route('register') }}" class="btn btn-outline-purple">
-                <i class="fas fa-th-list"></i> Ver Todas las Rifas
-            </a>
+            <div class="faq-item" x-bind:class="open === 2 ? 'faq-open' : ''">
+                <button class="faq-q" x-on:click="open = open === 2 ? null : 2">
+                    <span>¿Cómo recibo mi premio si gano?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-a">Una vez finalizado el sorteo, contactamos directamente al ganador con los datos de registro. Coordinamos la entrega según el tipo de premio: envío a domicilio, transferencia bancaria o entrega presencial.</div>
+            </div>
+
+            <div class="faq-item" x-bind:class="open === 3 ? 'faq-open' : ''">
+                <button class="faq-q" x-on:click="open = open === 3 ? null : 3">
+                    <span>¿Qué métodos de pago aceptan?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-a">Aceptamos todo tipo de métodos de pago para que puedas participar de forma fácil y segura. Todos los pagos son verificados antes de confirmar tu participación en el sorteo, garantizando un proceso confiable y transparente.</div>
+            </div>
+
+            <div class="faq-item" x-bind:class="open === 4 ? 'faq-open' : ''">
+                <button class="faq-q" x-on:click="open = open === 4 ? null : 4">
+                    <span>¿Puedo comprar varios números en la misma rifa?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-a">¡Sí! Puedes adquirir todos los números que quieras en una misma rifa, lo que aumenta tus probabilidades de ganar. Cada número tiene un costo fijo y no hay límite de compra por persona.</div>
+            </div>
+
+            <div class="faq-item" x-bind:class="open === 5 ? 'faq-open' : ''">
+                <button class="faq-q" x-on:click="open = open === 5 ? null : 5">
+                    <span>¿Cuándo se realiza el sorteo?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-a">Cada rifa tiene una fecha de sorteo establecida junto con la lotería asociada. El resultado del ganador será determinado por los resultados oficiales de dicha lotería, garantizando un proceso transparente y confiable. Los resultados quedarán publicados en la plataforma para su consulta.</div>
+            </div>
+
+            <div class="faq-item" x-bind:class="open === 6 ? 'faq-open' : ''">
+                <button class="faq-q" x-on:click="open = open === 6 ? null : 6">
+                    <span>¿Qué pasa si no se venden todos los números?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-a">Si al llegar la fecha de sorteo no se han vendido todos los números, el sorteo se realiza igualmente entre los participantes registrados. El premio siempre tiene un ganador garantizado.</div>
+            </div>
+
         </div>
-        @endif
     </div>
 </section>
 
@@ -510,10 +491,10 @@
                         <i class="fas fa-envelope"></i> soporte@raffly.com
                     </div>
                     <div class="footer-contact-item">
-                        <i class="fab fa-whatsapp"></i> +57 300 000 0000
+                        <i class="fab fa-whatsapp"></i> +57 321 3919596
                     </div>
                     <div class="footer-contact-item">
-                        <i class="fas fa-clock"></i> Lun – Vie: 8am – 6pm
+                        <i class="fas fa-clock"></i> Dom – Dom: 7am – 11pm
                     </div>
                     <div class="footer-contact-item">
                         <i class="fas fa-map-marker-alt"></i> Colombia
