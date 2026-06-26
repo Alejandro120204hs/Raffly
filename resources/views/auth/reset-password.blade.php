@@ -1,39 +1,55 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+<div class="auth-header">
+    <div class="auth-icon-wrap auth-icon-purple"><i class="fas fa-lock-open"></i></div>
+    <h1 class="auth-title">Nueva Contraseña</h1>
+    <p class="auth-subtitle">Elige una contraseña segura para tu cuenta</p>
+</div>
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+<form method="POST" action="{{ route('password.store') }}" class="auth-form">
+    @csrf
+    <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+    <div class="auth-field">
+        <label class="auth-label" for="email">
+            <i class="fas fa-envelope"></i> Correo electrónico
+        </label>
+        <input class="auth-input @error('email') auth-input-error @enderror"
+               type="email" id="email" name="email" value="{{ old('email', $request->email) }}"
+               placeholder="tucorreo@ejemplo.com" required autofocus autocomplete="username">
+        @error('email')
+            <span class="auth-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+    <div class="auth-field">
+        <label class="auth-label" for="password">
+            <i class="fas fa-lock"></i> Nueva contraseña
+        </label>
+        <input class="auth-input @error('password') auth-input-error @enderror"
+               type="password" id="password" name="password"
+               placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
+        @error('password')
+            <span class="auth-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+    </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+    <div class="auth-field">
+        <label class="auth-label" for="password_confirmation">
+            <i class="fas fa-lock"></i> Confirmar nueva contraseña
+        </label>
+        <input class="auth-input"
+               type="password" id="password_confirmation" name="password_confirmation"
+               placeholder="Repite tu nueva contraseña" required autocomplete="new-password">
+    </div>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+    <button type="submit" class="auth-btn auth-btn-primary">
+        <i class="fas fa-check"></i> Restablecer Contraseña
+    </button>
+</form>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
+<div class="auth-footer">
+    <a href="{{ route('login') }}" class="auth-link">
+        <i class="fas fa-arrow-left"></i> Volver al inicio de sesión
+    </a>
+</div>
 </x-guest-layout>

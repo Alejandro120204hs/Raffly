@@ -2,6 +2,9 @@
   "permissions": {
     "additionalDirectories": [
       "c:\\xampp\\htdocs\\Raffly"
+    ],
+    "allow": [
+      "Bash(php artisan *)"
     ]
   }
 }
