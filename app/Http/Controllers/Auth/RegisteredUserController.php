@@ -40,6 +40,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'customer', // Asignar el rol de cliente al registrarse
         ]);
 
         event(new Registered($user));
@@ -51,6 +52,6 @@ class RegisteredUserController extends Controller
             'name' => $user->name,
         ]);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('cliente.dashboard'));
     }
 }

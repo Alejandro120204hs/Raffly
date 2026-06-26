@@ -18,10 +18,12 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    // Los atributos que se pueden asignar masivamente
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -46,4 +48,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Si es administrador, devuelve true, de lo contrario false
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+    
 }
