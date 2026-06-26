@@ -1,17 +1,21 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\RifasController as AdminRifasController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
-// Ruta para el dashboard del admin
-Route::get('/admin/dashboard', function () {
-    return view('admin.admin-dashboard');
-})->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+// Rutas del Administrador
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/rifas', [AdminRifasController::class, 'index'])->name('rifas.index');
+    Route::get('/rifas/{id}', [AdminRifasController::class, 'show'])->name('rifas.show');
+});
 
-// Ruta para el dashboard del cliente
+// Rutas del Cliente
 Route::get('/cliente/dashboard', function () {
     return view('cliente.cliente-dashboard');
 })->middleware(['auth', 'role:customer'])->name('cliente.dashboard');
