@@ -1,47 +1,57 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<div class="auth-header">
+    <div class="auth-icon-wrap auth-icon-purple"><i class="fas fa-sign-in-alt"></i></div>
+    <h1 class="auth-title">Bienvenido de nuevo</h1>
+    <p class="auth-subtitle">Ingresa a tu cuenta para participar</p>
+</div>
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@if (session('status'))
+    <div class="auth-alert auth-alert-success">{{ session('status') }}</div>
+@endif
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+<form method="POST" action="{{ route('login') }}" class="auth-form">
+    @csrf
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+    <div class="auth-field">
+        <label class="auth-label" for="email">
+            <i class="fas fa-envelope"></i> Correo electrónico
+        </label>
+        <input class="auth-input @error('email') auth-input-error @enderror"
+               type="email" id="email" name="email" value="{{ old('email') }}"
+               placeholder="tucorreo@ejemplo.com" required autofocus autocomplete="username">
+        @error('email')
+            <span class="auth-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+    </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+    <div class="auth-field">
+        <label class="auth-label" for="password">
+            <i class="fas fa-lock"></i> Contraseña
+        </label>
+        <input class="auth-input @error('password') auth-input-error @enderror"
+               type="password" id="password" name="password"
+               placeholder="••••••••" required autocomplete="current-password">
+        @error('password')
+            <span class="auth-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+    </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+    <div class="auth-remember">
+        <label class="auth-checkbox-label">
+            <input type="checkbox" name="remember" id="remember_me" class="auth-checkbox">
+            <span>Recordarme</span>
+        </label>
+        @if (Route::has('password.request'))
+            <a href="{{ route('password.request') }}" class="auth-link">¿Olvidaste tu contraseña?</a>
+        @endif
+    </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+    <button type="submit" class="auth-btn auth-btn-primary">
+        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+    </button>
+</form>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+<div class="auth-footer">
+    ¿No tienes cuenta? <a href="{{ route('register') }}" class="auth-link">Regístrate gratis</a>
+</div>
 </x-guest-layout>

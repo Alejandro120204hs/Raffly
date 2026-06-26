@@ -28,6 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        session()->flash('sweet_alert', [
+            'type'  => 'login',
+            'name'  => Auth::user()->name,
+        ]);
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
