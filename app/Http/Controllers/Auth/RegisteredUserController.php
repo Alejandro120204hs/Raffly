@@ -40,12 +40,18 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'customer', // Asignar el rol de cliente al registrarse
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        session()->flash('sweet_alert', [
+            'type' => 'register',
+            'name' => $user->name,
+        ]);
+
+        return redirect(route('cliente.dashboard'));
     }
 }

@@ -53,9 +53,10 @@
 
             <div class="nav-actions">
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="nav-register">
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('cliente.dashboard') }}" class="nav-register">
                         <i class="fas fa-th-large"></i> Mi Panel
                     </a>
+
                 @else
                     @if (Route::has('login'))
                         <a href="{{ route('login') }}" class="nav-login">Iniciar Sesión</a>

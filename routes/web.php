@@ -6,9 +6,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Ruta para el dashboard del admin
+Route::get('/admin/dashboard', function () {
+    return view('admin.admin-dashboard');
+})->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+
+// Ruta para el dashboard del cliente
+Route::get('/cliente/dashboard', function () {
+    return view('cliente.cliente-dashboard');
+})->middleware(['auth', 'role:customer'])->name('cliente.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
