@@ -12,7 +12,15 @@ Route::get('/', [LandingController::class, 'index'])->name('home');
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/rifas', [AdminRifasController::class, 'index'])->name('rifas.index');
+    Route::get('/rifas/crear', [AdminRifasController::class, 'create'])->name('rifas.create');
+    Route::post('/rifas', [AdminRifasController::class, 'store'])->name('rifas.store');
     Route::get('/rifas/{id}', [AdminRifasController::class, 'show'])->name('rifas.show');
+    Route::patch('/rifas/{id}/resultado', [AdminRifasController::class, 'registrarResultado'])->name('rifas.resultado');
+    Route::get('/rifas/{id}/editar', [AdminRifasController::class, 'edit'])->name('rifas.edit');
+    Route::patch('/rifas/{id}', [AdminRifasController::class, 'update'])->name('rifas.update');
+    Route::patch('/rifas/{id}/finalizar', [AdminRifasController::class, 'finalizar'])->name('rifas.finalizar');
+    Route::patch('/rifas/{rifa}/numeros/{numero}', [AdminRifasController::class, 'updateNumero'])->name('rifas.numeros.update');
+
 });
 
 // Rutas del Cliente

@@ -1,12 +1,375 @@
 /* rifas-show.js — lógica del detalle de rifa */
 
 (function () {
-    const { total, cifras, vendidos, flyerSlug } = JSON.parse(
+    const { total, cifras, vendidos, pendientes, updateUrl, flyerSlug, clientes, compradores } = JSON.parse(
         document.getElementById('rifaConfig').textContent
     );
-    const VENDIDOS  = new Set(vendidos);
-    const PER_PAGE  = 210;
-    const PAGINATED = total > 100;
+    const VENDIDOS    = new Set(vendidos);
+    const PENDIENTES  = new Set(pendientes);
+    const COMPRADORES = compradores || {};   // { "5": { nombre, celular, ubicacion } }
+    const PER_PAGE   = 210;
+    const PAGINATED  = total > 100;
+    const CLIENTES   = clientes || [];
+
+    /* ── Modal registrar resultado ── */
+    const btnRegistrar   = document.getElementById('btnRegistrarResultado');
+    const modalResultado = document.getElementById('modalResultado');
+    const btnCerrar      = document.getElementById('btnCerrarModal');
+    const inputResultado = document.getElementById('resultadoInput');
+
+    if (btnRegistrar) {
+        btnRegistrar.addEventListener('click', () => {
+            modalResultado.style.display = 'flex';
+            inputResultado.focus();
+        });
+    }
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', () => { modalResultado.style.display = 'none'; });
+    }
+    if (modalResultado) {
+        modalResultado.addEventListener('click', (e) => {
+            if (e.target === modalResultado) modalResultado.style.display = 'none';
+        });
+        inputResultado.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, cifras);
+        });
+    }
+
+    /* ── Popup de estado ── */
+    const popup      = document.getElementById('numPopup');
+    const popupNum   = document.getElementById('numPopupNum');
+    const popupClose = document.getElementById('numPopupClose');
+    const overrides  = {};   // { num: 'free' | 'pending' | 'sold' }
+
+    function bubbleClass(n) {
+        const state = overrides[n] ?? (VENDIDOS.has(n) ? 'sold' : PENDIENTES.has(n) ? 'pending' : 'free');
+        return 'num-bubble' + (PAGINATED ? ' num-bubble--sm' : '') + ' num-bubble--' + state;
+    }
+
+    const verDetalleSection = document.getElementById('numPopupVerDetalle');
+    const btnVerComprador   = document.getElementById('btnVerComprador');
+
+    function openPopup(bubble, n) {
+        popupNum.textContent = String(n).padStart(cifras, '0');
+        popup.dataset.n = n;
+
+        /* Mostrar "Ver comprador" solo si tiene datos */
+        const currentState = overrides[n] ?? (VENDIDOS.has(n) ? 'sold' : PENDIENTES.has(n) ? 'pending' : 'free');
+        verDetalleSection.style.display = (COMPRADORES[n] && currentState !== 'free') ? 'block' : 'none';
+
+        popup.style.display = 'block';
+
+        const rect = bubble.getBoundingClientRect();
+        const pw = 210;
+        let top  = rect.bottom + window.scrollY + 6;
+        let left = rect.left  + window.scrollX - pw / 2 + rect.width / 2;
+        if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+        if (left < 8) left = 8;
+        popup.style.top  = top  + 'px';
+        popup.style.left = left + 'px';
+    }
+
+    function closePopup() { popup.style.display = 'none'; }
+
+    popupClose.addEventListener('click', closePopup);
+    document.addEventListener('click', function (e) {
+        if (!popup.contains(e.target) && !e.target.closest('.num-bubble')) closePopup();
+    });
+
+    /* ── Modal detalle comprador ── */
+    const modalDetalle    = document.getElementById('modalDetalleComprador');
+    const detalleNumLabel = document.getElementById('detalleNumLabel');
+    const detalleNombre   = document.getElementById('detalleNombre');
+    const detalleCelular  = document.getElementById('detalleCelular');
+    const detalleUbicacion = document.getElementById('detalleUbicacion');
+    const detalleUbicRow  = document.getElementById('detalleUbicacionRow');
+    const btnCerrarDetalle = document.getElementById('btnCerrarDetalle');
+
+    if (btnVerComprador) {
+        btnVerComprador.addEventListener('click', () => {
+            const n = parseInt(popup.dataset.n);
+            const data = COMPRADORES[n];
+            if (!data) return;
+            closePopup();
+
+            detalleNumLabel.textContent   = String(n).padStart(cifras, '0');
+            detalleNombre.textContent     = data.nombre || '—';
+            detalleCelular.textContent    = data.celular || 'No registrado';
+            detalleUbicacion.textContent  = data.ubicacion || '—';
+            detalleUbicRow.style.display  = data.ubicacion ? 'flex' : 'none';
+
+            modalDetalle.style.display = 'flex';
+        });
+    }
+
+    if (btnCerrarDetalle) {
+        btnCerrarDetalle.addEventListener('click', () => { modalDetalle.style.display = 'none'; });
+    }
+    if (modalDetalle) {
+        modalDetalle.addEventListener('click', e => {
+            if (e.target === modalDetalle) modalDetalle.style.display = 'none';
+        });
+    }
+
+    /* ── Modal Comprador ── */
+    const modalComprador    = document.getElementById('modalComprador');
+    const compradorNumLabel = document.getElementById('compradorNumLabel');
+    const btnCerrarComp     = document.getElementById('btnCerrarComprador');
+    const btnConfirmarComp  = document.getElementById('btnConfirmarComprador');
+    const tabBtns           = document.querySelectorAll('.comprador-tab');
+    const tabRegistrado     = document.getElementById('tabRegistrado');
+    const tabExterno        = document.getElementById('tabExterno');
+    const buscarInput       = document.getElementById('buscarCliente');
+    const listaEl           = document.getElementById('listaClientes');
+    const selectedUserIdEl  = document.getElementById('selectedUserId');
+    const selectDepto       = document.getElementById('extDepartamento');
+    const selectMunicipio   = document.getElementById('extMunicipio');
+
+    /* Poblar departamentos */
+    const GEO = window.COLOMBIA_GEO || {};
+    Object.keys(GEO).sort().forEach(dep => {
+        const opt = document.createElement('option');
+        opt.value = dep;
+        opt.textContent = dep;
+        selectDepto.appendChild(opt);
+    });
+
+    /* Cascada departamento → municipio */
+    selectDepto.addEventListener('change', () => {
+        const dep  = selectDepto.value;
+        const munis = GEO[dep] || [];
+        selectMunicipio.innerHTML = '<option value="">Seleccionar municipio...</option>';
+        munis.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            selectMunicipio.appendChild(opt);
+        });
+        selectMunicipio.disabled = munis.length === 0;
+        /* Bogotá: auto-seleccionar el único municipio */
+        if (munis.length === 1) {
+            selectMunicipio.value = munis[0];
+            selectMunicipio.disabled = true;
+        }
+    });
+
+    let pendingN     = null;   // número que se está configurando
+    let pendingState = null;   // 'pending' | 'sold'
+    let activeTab    = 'registrado';
+
+    /* Renderizar lista de clientes filtrada */
+    function renderClientes(query) {
+        const q = (query || '').toLowerCase();
+        const filtered = CLIENTES.filter(c =>
+            c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
+        );
+
+        listaEl.innerHTML = '';
+        if (filtered.length === 0) {
+            listaEl.innerHTML = '<div class="cliente-empty">No se encontraron clientes</div>';
+            return;
+        }
+
+        filtered.forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'cliente-item';
+            item.dataset.id = c.id;
+            const initials = c.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            item.innerHTML = `
+                <div class="cliente-avatar">${initials}</div>
+                <div class="cliente-info">
+                    <span class="cliente-name">${c.name}</span>
+                    <span class="cliente-email">${c.email}</span>
+                </div>`;
+            item.addEventListener('click', () => {
+                listaEl.querySelectorAll('.cliente-item').forEach(i => i.classList.remove('cliente-item--active'));
+                item.classList.add('cliente-item--active');
+                selectedUserIdEl.value = c.id;
+            });
+            listaEl.appendChild(item);
+        });
+    }
+
+    /* Tab switching */
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            activeTab = btn.dataset.tab;
+            tabBtns.forEach(b => b.classList.remove('comprador-tab--active'));
+            btn.classList.add('comprador-tab--active');
+            if (activeTab === 'registrado') {
+                tabRegistrado.style.display = 'flex';
+                tabExterno.style.display    = 'none';
+            } else {
+                tabRegistrado.style.display = 'none';
+                tabExterno.style.display    = 'flex';
+            }
+        });
+    });
+
+    /* Filtro de búsqueda */
+    if (buscarInput) {
+        buscarInput.addEventListener('input', () => renderClientes(buscarInput.value));
+    }
+
+    function openModalComprador(n, state) {
+        pendingN     = n;
+        pendingState = state;
+
+        const padded = String(n).padStart(cifras, '0');
+        compradorNumLabel.textContent = padded;
+
+        /* Reset tabs → registrado */
+        activeTab = 'registrado';
+        tabBtns.forEach(b => b.classList.toggle('comprador-tab--active', b.dataset.tab === 'registrado'));
+        tabRegistrado.style.display = 'flex';
+        tabExterno.style.display    = 'none';
+
+        /* Reset campos */
+        selectedUserIdEl.value = '';
+        if (buscarInput) buscarInput.value = '';
+        listaEl.querySelectorAll('.cliente-item').forEach(i => i.classList.remove('cliente-item--active'));
+        ['extNombre','extApellido','extCelular'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        selectDepto.value = '';
+        selectMunicipio.innerHTML = '<option value="">Primero selecciona un departamento</option>';
+        selectMunicipio.disabled = true;
+
+        renderClientes('');
+        modalComprador.style.display = 'flex';
+    }
+
+    function closeModalComprador() {
+        modalComprador.style.display = 'none';
+        pendingN     = null;
+        pendingState = null;
+    }
+
+    if (btnCerrarComp) {
+        btnCerrarComp.addEventListener('click', closeModalComprador);
+    }
+    if (modalComprador) {
+        modalComprador.addEventListener('click', e => {
+            if (e.target === modalComprador) closeModalComprador();
+        });
+    }
+
+    if (btnConfirmarComp) {
+        btnConfirmarComp.addEventListener('click', () => {
+            if (pendingN === null) return;
+
+            const n      = pendingN;
+            const state  = pendingState;
+            const padded = String(n).padStart(cifras, '0');
+
+            let body = { estado: { free: 'disponible', pending: 'pendiente', sold: 'vendido' }[state] };
+
+            if (activeTab === 'registrado') {
+                const uid = selectedUserIdEl.value;
+                if (!uid) { alert('Selecciona un cliente de la lista.'); return; }
+                body.user_id = uid;
+            } else {
+                const nombre   = document.getElementById('extNombre')?.value.trim();
+                const apellido = document.getElementById('extApellido')?.value.trim();
+                const celular  = document.getElementById('extCelular')?.value.trim();
+                if (!nombre || !apellido || !celular) {
+                    alert('Nombre, apellido y celular son obligatorios.');
+                    return;
+                }
+                const depto    = selectDepto.value;
+                const municipio = selectMunicipio.value;
+                body.comprador_nombre    = nombre;
+                body.comprador_apellido  = apellido;
+                body.comprador_ubicacion = (municipio && depto) ? municipio + ', ' + depto : (municipio || depto || null);
+                body.comprador_celular   = celular;
+            }
+
+            closeModalComprador();
+
+            /* Actualizar COMPRADORES local para que el botón aparezca sin recargar */
+            if (state !== 'free') {
+                if (activeTab === 'registrado') {
+                    const uid  = selectedUserIdEl.value;
+                    const cli  = CLIENTES.find(c => String(c.id) === String(uid));
+                    COMPRADORES[n] = { nombre: cli ? cli.name : 'Usuario registrado', celular: null, ubicacion: null };
+                } else {
+                    COMPRADORES[n] = {
+                        nombre:    (document.getElementById('extNombre')?.value.trim() || '') + ' ' + (document.getElementById('extApellido')?.value.trim() || ''),
+                        celular:   document.getElementById('extCelular')?.value.trim() || null,
+                        ubicacion: (selectMunicipio.value && selectDepto.value) ? selectMunicipio.value + ', ' + selectDepto.value : null,
+                    };
+                }
+            } else {
+                delete COMPRADORES[n];
+            }
+
+            /* Actualizar UI */
+            overrides[n] = state;
+            const target = document.querySelector('.num-bubble[data-n="' + n + '"]');
+            if (target) target.className = bubbleClass(n);
+
+            const flyerCell = document.querySelector('#rifaFlyer .flyer-cell[data-n="' + n + '"]');
+            if (flyerCell) {
+                flyerCell.classList.remove('flyer-cell--sold', 'flyer-cell--pending');
+                if (state === 'sold')    flyerCell.classList.add('flyer-cell--sold');
+                if (state === 'pending') flyerCell.classList.add('flyer-cell--pending');
+            }
+
+            /* PATCH al servidor */
+            if (updateUrl) {
+                fetch(updateUrl.replace('__NUM__', padded), {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(body),
+                });
+            }
+        });
+    }
+
+    /* ── Popup buttons ── */
+    popup.querySelectorAll('.num-popup-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const n     = parseInt(popup.dataset.n);
+            const state = this.dataset.state;
+            closePopup();
+
+            if (state === 'free') {
+                /* Disponible: sin modal, guardar directo */
+                overrides[n] = state;
+                const target = document.querySelector('.num-bubble[data-n="' + n + '"]');
+                if (target) target.className = bubbleClass(n);
+
+                const flyerCell = document.querySelector('#rifaFlyer .flyer-cell[data-n="' + n + '"]');
+                if (flyerCell) {
+                    flyerCell.classList.remove('flyer-cell--sold', 'flyer-cell--pending');
+                }
+
+                if (updateUrl) {
+                    fetch(updateUrl.replace('__NUM__', String(n).padStart(cifras, '0')), {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({ estado: 'disponible' }),
+                    });
+                }
+            } else {
+                /* Pendiente o vendido: abrir modal comprador */
+                openModalComprador(n, state);
+            }
+        });
+    });
+
+    function attachBubbleClick(el) {
+        el.addEventListener('click', function () {
+            openPopup(this, parseInt(this.dataset.n));
+        });
+    }
 
     /* ── Buscador ── */
     const input  = document.getElementById('numSearch');
@@ -28,10 +391,15 @@
             }
 
             const padded = String(val).padStart(cifras, '0');
+            const currentState = overrides[val]
+                ?? (VENDIDOS.has(val) ? 'sold' : PENDIENTES.has(val) ? 'pending' : 'free');
 
-            if (VENDIDOS.has(val)) {
+            if (currentState === 'sold') {
                 result.className = 'num-search-result num-search-result--sold';
                 result.innerHTML = '<i class="fas fa-times-circle"></i> El número <strong>' + padded + '</strong> está <strong>vendido</strong>';
+            } else if (currentState === 'pending') {
+                result.className = 'num-search-result num-search-result--pending';
+                result.innerHTML = '<i class="fas fa-clock"></i> El número <strong>' + padded + '</strong> está <strong>falta por pagar</strong>';
             } else {
                 result.className = 'num-search-result num-search-result--free';
                 result.innerHTML = '<i class="fas fa-check-circle"></i> El número <strong>' + padded + '</strong> está <strong>disponible</strong>';
@@ -77,6 +445,9 @@
         });
     }
 
+    /* Enganchar bubbles PHP (2 cifras) */
+    document.querySelectorAll('#numGrid .num-bubble').forEach(attachBubbleClick);
+
     if (!PAGINATED) return;
 
     /* ── Grid paginado (3 y 4 cifras) ── */
@@ -93,10 +464,10 @@
         grid.innerHTML = '';
         for (let i = start; i < end; i++) {
             const b       = document.createElement('div');
-            b.className   = 'num-bubble num-bubble--sm ' + (VENDIDOS.has(i) ? 'num-bubble--sold' : 'num-bubble--free');
+            b.className   = bubbleClass(i);
             b.dataset.n   = i;
-            b.title       = VENDIDOS.has(i) ? 'Vendido' : 'Disponible';
             b.textContent = String(i).padStart(cifras, '0');
+            attachBubbleClick(b);
             grid.appendChild(b);
         }
 
@@ -147,10 +518,10 @@
         const left  = Math.max(2, current - delta);
         const right = Math.min(total - 1, current + delta);
         pages.push(1);
-        if (left > 2)        pages.push('...');
+        if (left > 2)          pages.push('...');
         for (let i = left; i <= right; i++) pages.push(i);
         if (right < total - 1) pages.push('...');
-        if (total > 1)       pages.push(total);
+        if (total > 1)         pages.push(total);
         return pages;
     }
 

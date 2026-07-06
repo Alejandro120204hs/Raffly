@@ -11,7 +11,7 @@
         <h2 class="page-header-title">Gestión de Rifas</h2>
         <p class="page-header-sub">Administra todas las rifas de la plataforma</p>
     </div>
-    <a href="#" class="btn-primary">
+    <a href="{{ route('admin.rifas.create') }}" class="btn-primary">
         <i class="fas fa-plus"></i> Crear Rifa
     </a>
 </div>
@@ -94,12 +94,16 @@
                             <a href="{{ route('admin.rifas.show', $rifa['id']) }}" class="action-btn action-btn--view" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <button class="action-btn action-btn--edit" title="Editar">
+                            <a href="{{ route('admin.rifas.edit', $rifa['id']) }}" class="action-btn action-btn--edit" title="Editar">
                                 <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="action-btn action-btn--delete" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            </a>
+                            <form action="{{ route('admin.rifas.finalizar', $rifa['id']) }}" method="POST"
+                                  onsubmit="return confirm('¿Finalizar esta rifa? No se podrán vender más números.')">
+                                @csrf @method('PATCH')
+                                <button type="submit" class="action-btn action-btn--delete" title="Finalizar rifa">
+                                    <i class="fas fa-stop-circle"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

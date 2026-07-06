@@ -10,28 +10,21 @@ class LandingController extends Controller
     public function index()
     {
         $rifasActivas = Rifa::where('estado', 'activa')
-            ->orderBy('fecha_sorteo')
+            ->orderBy('fecha')
             ->take(6)
             ->get();
 
         $ganadoresRecientes = Rifa::where('estado', 'finalizada')
-            ->whereNotNull('numero_ganador')
+            ->whereNotNull('resultado')
             ->latest('updated_at')
             ->take(4)
-            ->get()
-            ->each(function (Rifa $rifa) {
-                $rifa->ganador_participacion = $rifa->participaciones()
-                    ->with('user')
-                    ->where('numero', $rifa->numero_ganador)
-                    ->first();
-            });
+            ->get();
 
         $stats = [
             'rifas_realizadas'     => Rifa::where('estado', 'finalizada')->count(),
             'usuarios_registrados' => User::count(),
-            'premios_entregados'   => Rifa::where('estado', 'finalizada')
-                ->whereNotNull('numero_ganador')->count(),
-            'monto_total'          => (int) Rifa::where('estado', 'finalizada')->sum('monto_premio'),
+            'premios_entregados'   => Rifa::where('estado', 'finalizada')->whereNotNull('resultado')->count(),
+            'monto_total'          => 0,
         ];
 
         return view('welcome', compact('rifasActivas', 'ganadoresRecientes', 'stats'));

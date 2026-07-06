@@ -3,61 +3,257 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Rifa;
+use App\Models\NumeroRifa;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class RifasController extends Controller
 {
     public function index()
     {
-        return view('admin.rifas.index', ['rifas' => $this->rifas()]);
+        $rifas = Rifa::orderBy('created_at', 'desc')->get()->map(function ($r) {
+            $vendidos = $r->numeros()->where('estado', 'vendido')->count();
+            return [
+                'id'        => $r->id,
+                'nombre'    => $r->nombre,
+                'precio'    => $r->precio,
+                'vendidos'  => $vendidos,
+                'fecha'     => \Carbon\Carbon::parse($r->fecha)->format('d M Y'),
+                'estado'    => $r->estado,
+                'tipo'      => $r->tipo,
+                'premio'    => $r->premio,
+                'loteria'   => $r->loteria,
+                'cifras'    => (int) $r->cifras,
+                'juega'     => $r->juega,
+                'resultado' => $r->resultado,
+                'total'     => (int) pow(10, $r->cifras),
+            ];
+        })->toArray();
+
+        return view('admin.rifas.index', compact('rifas'));
+    }
+
+    public function create()
+    {
+        return view('admin.rifas.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'tipo'    => 'required|in:objeto,efectivo',
+            'premio'  => 'required|string|max:80',
+            'cifras'  => 'required|in:2,3,4',
+            'precio'  => 'required|integer|min:100',
+            'loteria' => 'required|string',
+            'juega'   => 'required|string',
+            'fecha'   => 'required|date|after:today',
+        ]);
+
+        $data['nombre'] = $data['premio'];
+        $data['estado'] = 'activa';
+
+        $rifa  = Rifa::create($data);
+        $total = (int) pow(10, $rifa->cifras);
+        $batch = [];
+        for ($i = 0; $i < $total; $i++) {
+            $batch[] = [
+                'rifa_id'    => $rifa->id,
+                'numero'     => str_pad($i, $rifa->cifras, '0', STR_PAD_LEFT),
+                'estado'     => 'disponible',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        NumeroRifa::insert($batch);
+
+        return redirect()->route('admin.rifas.index');
     }
 
     public function show(int $id)
     {
-        $rifa = collect($this->rifas())->firstWhere('id', $id);
+        $db = Rifa::findOrFail($id);
 
-        abort_if(!$rifa, 404);
+        $numerosDb  = $db->numeros()->with('user')->get()->keyBy('numero');
+        $total      = (int) pow(10, $db->cifras);
+        $todos      = range(0, $total - 1);
+        $vendidos   = $numerosDb->filter(fn($n) => $n->estado === 'vendido')->keys()->map(fn($k) => (int) $k)->values()->toArray();
+        $pendientes = $numerosDb->filter(fn($n) => $n->estado === 'pendiente')->keys()->map(fn($k) => (int) $k)->values()->toArray();
+        $updateUrl  = route('admin.rifas.numeros.update', ['rifa' => $db->id, 'numero' => '__NUM__']);
 
-        // Genera números vendidos de forma determinista usando el id como semilla
-        $todos = range(1, $rifa['total']);
-        $vendidos = array_values(array_filter($todos, function ($n) use ($rifa) {
-            return (($n * 13 + $rifa['id'] * 7) % 100) < round(($rifa['vendidos'] / $rifa['total']) * 100);
-        }));
-
-        // Ajusta para que el conteo coincida exactamente
-        if (count($vendidos) > $rifa['vendidos']) {
-            $vendidos = array_slice($vendidos, 0, $rifa['vendidos']);
-        }
-
-        return view('admin.rifas.show', compact('rifa', 'todos', 'vendidos'));
-    }
-
-    private function rifas(): array
-    {
-        // premio = lo que recibe el ganador (objeto o efectivo)
-        // tipo   = 'objeto' | 'efectivo'
-        // precio × total > valor aproximado del premio para que sea rentable
-        $raw = [
-            ['id' => 1,  'nombre' => 'iPhone 15 Pro Max',        'precio' => 65000, 'vendidos' => 73,   'fecha' => '12 Jul 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'iPhone 15 Pro Max 256GB',        'loteria' => 'Lotería de Boyacá',      'cifras' => 2, 'juega' => 'Sábados',   'resultado' => null],
-            ['id' => 2,  'nombre' => 'MacBook Pro M3',           'precio' => 12000, 'vendidos' => 360,  'fecha' => '20 Jul 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'MacBook Pro M3 14" 512GB',       'loteria' => 'Lotería del Tolima',     'cifras' => 3, 'juega' => 'Lunes',     'resultado' => null],
-            ['id' => 3,  'nombre' => 'PlayStation 5',            'precio' => 500,   'vendidos' => 10000,'fecha' => '03 Jul 2026', 'estado' => 'finalizada', 'tipo' => 'objeto',   'premio' => 'PlayStation 5 + 3 Juegos',       'loteria' => 'Lotería de Boyacá',      'cifras' => 4, 'juega' => 'Sábados',   'resultado' => '4731'],
-            ['id' => 4,  'nombre' => 'Smart TV Samsung 65"',     'precio' => 55000, 'vendidos' => 54,   'fecha' => '18 Jul 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'Smart TV Samsung 65" QLED 4K',   'loteria' => 'Lotería de Medellín',    'cifras' => 2, 'juega' => 'Viernes',   'resultado' => null],
-            ['id' => 5,  'nombre' => 'Bicicleta Eléctrica',      'precio' => 6000,  'vendidos' => 230,  'fecha' => '25 Jul 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'Bicicleta Eléctrica GW Premium', 'loteria' => 'Lotería de Cundinamarca','cifras' => 3, 'juega' => 'Lunes',     'resultado' => null],
-            ['id' => 6,  'nombre' => 'Efectivo $1.000.000',      'precio' => 200,   'vendidos' => 3100, 'fecha' => '15 Jul 2026', 'estado' => 'activa',     'tipo' => 'efectivo', 'premio' => '$1.000.000',                      'loteria' => 'Lotería del Tolima',     'cifras' => 4, 'juega' => 'Lunes',     'resultado' => null],
-            ['id' => 7,  'nombre' => 'Viaje a Cartagena x2',     'precio' => 38000, 'vendidos' => 100,  'fecha' => '01 Jun 2026', 'estado' => 'finalizada', 'tipo' => 'objeto',   'premio' => 'Viaje todo incluido Cartagena x2','loteria' => 'Lotería de Medellín',   'cifras' => 2, 'juega' => 'Viernes',   'resultado' => '63'],
-            ['id' => 8,  'nombre' => 'iPhone 14 Pro',            'precio' => 50000, 'vendidos' => 100,  'fecha' => '20 May 2026', 'estado' => 'finalizada', 'tipo' => 'objeto',   'premio' => 'iPhone 14 Pro 128GB',            'loteria' => 'Lotería de Boyacá',      'cifras' => 2, 'juega' => 'Sábados',   'resultado' => '83'],
-            ['id' => 9,  'nombre' => 'Nintendo Switch OLED',     'precio' => 20000, 'vendidos' => 41,   'fecha' => '30 Jul 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'Nintendo Switch OLED + 3 Juegos','loteria' => 'Lotería de Cundinamarca','cifras' => 2, 'juega' => 'Lunes',     'resultado' => null],
-            ['id' => 10, 'nombre' => 'Moto Bajaj Pulsar NS200',  'precio' => 14000, 'vendidos' => 180,  'fecha' => '05 Ago 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'Moto Bajaj Pulsar NS200 2026',   'loteria' => 'Lotería del Huila',      'cifras' => 3, 'juega' => 'Miércoles', 'resultado' => null],
-            ['id' => 11, 'nombre' => 'Samsung Galaxy S24 Ultra', 'precio' => 8000,  'vendidos' => 900,  'fecha' => '28 Jul 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'Samsung Galaxy S24 Ultra 256GB', 'loteria' => 'Lotería de Bogotá',      'cifras' => 3, 'juega' => 'Jueves',    'resultado' => null],
-            ['id' => 12, 'nombre' => 'Refrigerador Samsung',     'precio' => 75000, 'vendidos' => 100,  'fecha' => '10 May 2026', 'estado' => 'finalizada', 'tipo' => 'objeto',   'premio' => 'Refrigerador Samsung Family Hub', 'loteria' => 'Lotería del Tolima',     'cifras' => 2, 'juega' => 'Lunes',     'resultado' => '29'],
-            ['id' => 13, 'nombre' => 'iPad Pro M4',              'precio' => 80000, 'vendidos' => 28,   'fecha' => '10 Ago 2026', 'estado' => 'activa',     'tipo' => 'objeto',   'premio' => 'iPad Pro M4 11" + Apple Pencil', 'loteria' => 'Lotería de Boyacá',      'cifras' => 2, 'juega' => 'Sábados',   'resultado' => null],
-            ['id' => 14, 'nombre' => 'Efectivo $5.000.000',      'precio' => 700,   'vendidos' => 4500, 'fecha' => '15 Ago 2026', 'estado' => 'activa',     'tipo' => 'efectivo', 'premio' => '$5.000.000',                      'loteria' => 'Lotería de Medellín',    'cifras' => 4, 'juega' => 'Viernes',   'resultado' => null],
-            ['id' => 15, 'nombre' => 'Cámara Sony Alpha A7 IV', 'precio' => 11000, 'vendidos' => 512,  'fecha' => '15 Abr 2026', 'estado' => 'finalizada', 'tipo' => 'objeto',   'premio' => 'Cámara Sony Alpha A7 IV + Lente', 'loteria' => 'Lotería de Cundinamarca','cifras' => 3, 'juega' => 'Lunes',     'resultado' => '512'],
+        $rifa = [
+            'id'        => $db->id,
+            'nombre'    => $db->nombre,
+            'precio'    => $db->precio,
+            'vendidos'  => count($vendidos),
+            'fecha'     => \Carbon\Carbon::parse($db->fecha)->format('d M Y'),
+            'estado'    => $db->estado,
+            'tipo'      => $db->tipo,
+            'premio'    => $db->premio,
+            'loteria'   => $db->loteria,
+            'cifras'    => (int) $db->cifras,
+            'juega'     => $db->juega,
+            'resultado' => $db->resultado,
+            'total'     => $total,
         ];
 
-        // Calcula automáticamente el total según las cifras (10^cifras)
-        return array_map(function ($r) {
-            $r['total'] = (int) pow(10, $r['cifras']);
-            return $r;
-        }, $raw);
+        $clientes = User::where('role', 'customer')->get(['id','name','email']);
+
+        $ganador = null;
+        if ($db->resultado) {
+            $numGanador = $numerosDb->get($db->resultado);
+            if ($numGanador) {
+                if ($numGanador->user_id && $numGanador->user) {
+                    $ganador = [
+                        'nombre'    => $numGanador->user->name,
+                        'celular'   => $numGanador->user->celular,
+                        'ubicacion' => ($numGanador->user->municipio && $numGanador->user->departamento)
+                            ? $numGanador->user->municipio . ', ' . $numGanador->user->departamento
+                            : null,
+                        'estado'    => $numGanador->estado,
+                        'tipo'      => 'registrado',
+                    ];
+                } elseif ($numGanador->comprador_nombre) {
+                    $ganador = [
+                        'nombre'    => trim($numGanador->comprador_nombre . ' ' . $numGanador->comprador_apellido),
+                        'celular'   => $numGanador->comprador_celular,
+                        'ubicacion' => $numGanador->comprador_ubicacion,
+                        'estado'    => $numGanador->estado,
+                        'tipo'      => 'externo',
+                    ];
+                } else {
+                    $ganador = ['tipo' => 'sin_comprador', 'estado' => $numGanador->estado];
+                }
+            }
+        }
+
+        $compradores = [];
+        foreach ($numerosDb as $numero => $n) {
+            if (!in_array($n->estado, ['pendiente', 'vendido'])) continue;
+            $nombre = $celular = $ubicacion = null;
+
+            if ($n->user_id && $n->user) {
+                $nombre  = $n->user->name;
+                $celular = $n->user->celular;
+                $ubicacion = ($n->user->municipio && $n->user->departamento)
+                    ? $n->user->municipio . ', ' . $n->user->departamento
+                    : ($n->user->municipio ?? $n->user->departamento ?? null);
+            } elseif ($n->comprador_nombre) {
+                $nombre    = trim($n->comprador_nombre . ' ' . $n->comprador_apellido);
+                $celular   = $n->comprador_celular;
+                $ubicacion = $n->comprador_ubicacion;
+            }
+
+            if ($nombre) {
+                $compradores[(int)$numero] = [
+                    'nombre'    => $nombre,
+                    'celular'   => $celular,
+                    'ubicacion' => $ubicacion,
+                ];
+            }
+        }
+
+        return view('admin.rifas.show', compact('rifa', 'todos', 'vendidos', 'pendientes', 'updateUrl', 'clientes', 'compradores', 'ganador'));
+    }
+
+    public function registrarResultado(Request $request, int $id)
+    {
+        $rifa = Rifa::findOrFail($id);
+
+        $request->validate([
+            'resultado' => ['required', 'regex:/^\d{' . $rifa->cifras . '}$/'],
+        ]);
+
+        $rifa->update([
+            'resultado' => $request->resultado,
+            'estado'    => 'finalizada',
+        ]);
+
+        return redirect()->route('admin.rifas.show', $id);
+    }
+
+    public function edit(int $id)
+    {
+        $rifa = Rifa::findOrFail($id);
+        return view('admin.rifas.edit', compact('rifa'));
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $rifa = Rifa::findOrFail($id);
+
+        $data = $request->validate([
+            'tipo'    => 'required|in:objeto,efectivo',
+            'premio'  => 'required|string|max:80',
+            'precio'  => 'required|integer|min:100',
+            'loteria' => 'required|string',
+            'juega'   => 'required|string',
+            'fecha'   => 'required|date',
+        ]);
+
+        $data['nombre'] = $data['premio'];
+        $rifa->update($data);
+
+        return redirect()->route('admin.rifas.index');
+    }
+
+    public function finalizar(int $id)
+    {
+        Rifa::findOrFail($id)->update(['estado' => 'finalizada']);
+        return redirect()->route('admin.rifas.index');
+    }
+
+    public function updateNumero(Request $request, int $rifaId, string $numero)
+    {
+        $request->validate([
+            'estado'              => 'required|in:disponible,pendiente,vendido',
+            'user_id'             => 'nullable|exists:users,id',
+            'comprador_nombre'    => 'nullable|string|max:80',
+            'comprador_apellido'  => 'nullable|string|max:80',
+            'comprador_ubicacion' => 'nullable|string|max:120',
+            'comprador_celular'   => 'nullable|string|max:20',
+        ]);
+
+        $rifa = Rifa::findOrFail($rifaId);
+
+        if ($rifa->numeros()->count() === 0) {
+            $total = (int) pow(10, $rifa->cifras);
+            $batch = [];
+            for ($i = 0; $i < $total; $i++) {
+                $batch[] = [
+                    'rifa_id'    => $rifa->id,
+                    'numero'     => str_pad($i, $rifa->cifras, '0', STR_PAD_LEFT),
+                    'estado'     => 'disponible',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            NumeroRifa::insert($batch);
+        }
+
+        $update = ['estado' => $request->estado];
+
+        if ($request->estado === 'disponible') {
+            $update += [
+                'user_id' => null, 'comprador_nombre' => null,
+                'comprador_apellido' => null, 'comprador_ubicacion' => null,
+                'comprador_celular' => null,
+            ];
+        } else {
+            $update += [
+                'user_id'             => $request->user_id,
+                'comprador_nombre'    => $request->comprador_nombre,
+                'comprador_apellido'  => $request->comprador_apellido,
+                'comprador_ubicacion' => $request->comprador_ubicacion,
+                'comprador_celular'   => $request->comprador_celular,
+            ];
+        }
+
+        NumeroRifa::where('rifa_id', $rifaId)
+            ->where('numero', $numero)
+            ->update($update);
+
+        return response()->json(['ok' => true]);
     }
 }
