@@ -16,6 +16,7 @@
 
     {{-- CSS de la landing --}}
     <link rel="stylesheet" href="{{ asset('assets/css/styles-landing.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive/landing-responsive.css') }}">
 
     {{-- Alpine.js (desde Vite build si existe, o CDN como fallback) --}}
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -481,7 +482,7 @@
                 <div class="footer-col">
                     <h4>Contacto</h4>
                     <div class="footer-contact-item">
-                        <i class="fas fa-envelope"></i> soporte@raffly.com
+                        <i class="fas fa-envelope"></i> soporteraffly@gmail.com
                     </div>
                     <div class="footer-contact-item">
                         <i class="fab fa-whatsapp"></i> +57 321 3919596

@@ -2704,3 +2704,9 @@ body {
     align-items: center;
     gap: .5rem;
 }
+
+/* ── SweetAlert2 – Raffly theme ── */
+.raffly-swal-popup  { border-radius: 18px !important; font-family: 'Inter', sans-serif !important; }
+.raffly-swal-title  { font-size: 1.25rem !important; font-weight: 800 !important; color: #1E1B4B !important; }
+.raffly-swal-btn    { border-radius: 99px !important; font-weight: 700 !important; padding: .6rem 2rem !important; }
+.raffly-swal-bar    { background: #7C3AED !important; }
