@@ -31,16 +31,22 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name'         => ['required', 'string', 'max:255'],
+            'email'        => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password'     => ['required', 'confirmed', Rules\Password::defaults()],
+            'celular'      => ['required', 'string', 'max:20'],
+            'departamento' => ['required', 'string', 'max:80'],
+            'municipio'    => ['required', 'string', 'max:80'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'customer', // Asignar el rol de cliente al registrarse
+            'name'         => $request->name,
+            'email'        => $request->email,
+            'password'     => Hash::make($request->password),
+            'role'         => 'customer',
+            'celular'      => $request->celular,
+            'departamento' => $request->departamento,
+            'municipio'    => $request->municipio,
         ]);
 
         event(new Registered($user));
