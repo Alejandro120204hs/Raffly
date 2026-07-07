@@ -338,37 +338,29 @@
         <div class="win-grid">
             @forelse($ganadoresRecientes as $index => $rifa)
             <div class="win-card fade-up delay-{{ $index + 1 }}">
-                @if($rifa->imagen)
-                    <img class="win-thumb" src="{{ $rifa->imagen }}" alt="{{ $rifa->nombre }}">
-                @else
-                    <div class="win-thumb-ph"><i class="fas fa-trophy"></i></div>
-                @endif
+                <div class="win-thumb-ph"><i class="fas fa-trophy"></i></div>
 
                 <div class="win-info">
                     <div class="win-name">
                         <i class="fas fa-user-circle" style="color:var(--primary-light);margin-right:.35rem"></i>
-                        {{ $rifa->ganador_participacion?->user?->name
-                            ?? $rifa->ganador_participacion?->nombre_participante
-                            ?? 'Ganador Anónimo' }}
+                        {{ $rifa['ganador'] }}
                     </div>
                     <div class="win-premio">
-                        <i class="fas fa-star" style="margin-right:.25rem"></i>{{ $rifa->nombre }}
+                        <i class="fas fa-star" style="margin-right:.25rem"></i>{{ $rifa['nombre'] }}
                     </div>
                     <div>
                         <span class="win-numero">
-                            <i class="fas fa-ticket-alt"></i> Número #{{ $rifa->numero_ganador }}
+                            <i class="fas fa-ticket-alt"></i> Número #{{ $rifa['numero'] }}
                         </span>
                     </div>
                     <div class="win-fecha">
                         <i class="fas fa-calendar-check" style="margin-right:.3rem"></i>
-                        {{ $rifa->fecha_sorteo->format('d/m/Y') }}
+                        {{ $rifa['fecha'] }}
                     </div>
-                    @if($rifa->monto_premio)
-                        <div class="win-monto">
-                            <i class="fas fa-coins" style="margin-right:.3rem"></i>
-                            Premio: ${{ number_format($rifa->monto_premio) }}
-                        </div>
-                    @endif
+                    <div class="win-monto">
+                        <i class="fas fa-coins" style="margin-right:.3rem"></i>
+                        Premio: ${{ number_format($rifa['monto'], 0, ',', '.') }}
+                    </div>
                 </div>
             </div>
             @empty

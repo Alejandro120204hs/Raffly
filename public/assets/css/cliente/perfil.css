@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════
+   Raffly Cliente – perfil.css
+═══════════════════════════════════════ */
+
+/* ── Profile header ── */
+.profile-header {
+    position: relative;
+    margin-bottom: 1.75rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-cover {
+    height: 130px;
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 40%, #4C1D95 75%, #7C3AED 100%);
+}
+
+.profile-hero {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.25rem;
+    padding: 0 2rem 1.5rem;
+    background: var(--white);
+    margin-top: -1px;
+}
+
+.profile-avatar-lg {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 50%;
+    border: 4px solid var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-top: -40px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(124,58,237,.3);
+}
+
+.profile-hero-info { padding-bottom: .25rem; }
+
+.profile-hero-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    line-height: 1.2;
+}
+
+.profile-hero-role {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    margin-top: .25rem;
+}
+
+/* ── Grid ── */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+/* ── Panel header (override con el estilo del admin) ── */
+.profile-grid .panel-header {
+    padding: 1.125rem 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--gray-100);
+}
+
+.profile-grid .panel-title {
+    font-size: .925rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+.profile-grid .panel-title i {
+    color: var(--primary);
+    font-size: .85rem;
+}
+
+.panel-badge {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: .2rem .625rem;
+    border-radius: 99px;
+}
+
+/* ── Panel form body ── */
+.panel-form { padding: 1.5rem; }
+
+/* ── Grupos ── */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: .375rem;
+    margin-bottom: 1.125rem;
+}
+
+.form-label {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+}
+
+.form-label i { color: var(--primary); font-size: .75rem; }
+
+.form-input {
+    width: 100%;
+    padding: .65rem .875rem;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: .875rem;
+    font-family: inherit;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: border-color var(--transition), box-shadow var(--transition);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+
+.form-input.is-error { border-color: #EF4444; }
+
+.form-input--readonly {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .875rem center;
+    cursor: pointer;
+}
+
+.form-select:disabled {
+    background-color: var(--gray-100);
+    color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+.form-hint {
+    font-size: .72rem;
+    color: var(--gray-400);
+}
+
+/* ── Row 2 columnas ── */
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* ── Static input (rol) ── */
+.form-input-static { padding: .4rem 0; }
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: .8rem;
+    font-weight: 700;
+    padding: .3rem .75rem;
+    border-radius: 99px;
+}
+
+/* ── Security hint ── */
+.security-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: .5rem;
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    border-radius: var(--radius-sm);
+    padding: .75rem 1rem;
+    font-size: .8rem;
+    color: #1D4ED8;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+}
+
+.security-hint i { margin-top: 1px; flex-shrink: 0; }
+
+/* ── Mensajes de estado ── */
+.form-alert {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem .875rem;
+    border-radius: var(--radius-sm);
+    font-size: .82rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.form-alert--success {
+    background: #F0FDF4;
+    border: 1px solid #86EFAC;
+    color: #166534;
+}
+
+.form-error {
+    font-size: .78rem;
+    color: #EF4444;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+}
+
+.form-success {
+    font-size: .825rem;
+    color: var(--success);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+}
+
+/* ── Actions ── */
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-100);
+}
+
+/* ── Botón primario (override para que tenga sombra como admin) ── */
+.profile-grid .btn-primary {
+    box-shadow: 0 4px 12px rgba(124,58,237,.25);
+}
+
+.profile-grid .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(124,58,237,.35);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .profile-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+    .profile-hero { padding: 0 1rem 1.25rem; gap: .875rem; }
+    .form-row-2   { grid-template-columns: 1fr; }
+    .panel-form   { padding: 1.125rem; }
+}

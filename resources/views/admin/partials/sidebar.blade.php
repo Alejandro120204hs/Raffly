@@ -27,19 +27,14 @@
             <span>Rifas</span>
         </a>
 
-        <a href="#" class="nav-item {{ request()->routeIs('admin.sorteos.*') ? 'active' : '' }}">
-            <i class="fas fa-random"></i>
-            <span>Sorteos</span>
-        </a>
-
-        <a href="#" class="nav-item {{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.usuarios.index') }}" class="nav-item {{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}">
             <i class="fas fa-users"></i>
             <span>Usuarios</span>
         </a>
 
         <span class="nav-section-label">Finanzas</span>
 
-        <a href="#" class="nav-item {{ request()->routeIs('admin.ingresos.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.ingresos.index') }}" class="nav-item {{ request()->routeIs('admin.ingresos.*') ? 'active' : '' }}">
             <i class="fas fa-dollar-sign"></i>
             <span>Ingresos</span>
         </a>

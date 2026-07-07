@@ -175,10 +175,10 @@ body {
 }
 
 .nav-logout {
-    color: rgba(255,255,255,.5);
+    color: #FCA5A5;
 }
 .nav-logout:hover {
-    background: rgba(239,68,68,.15);
+    background: rgba(239,68,68,.18);
     color: #FCA5A5;
 }
 
@@ -589,7 +589,29 @@ body {
     font-weight: 700;
     font-size: 0.875rem;
     color: var(--gray-800);
+    display: block;
 }
+
+.sorteo-loteria {
+    font-size: .72rem;
+    color: var(--gray-400);
+    font-weight: 500;
+    display: block;
+    margin-top: .1rem;
+}
+
+.sorteo-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    padding: 2.5rem 1rem;
+    color: var(--gray-400);
+    text-align: center;
+}
+
+.sorteo-empty i { font-size: 2rem; opacity: .35; }
+.sorteo-empty p  { font-size: .82rem; }
 
 .sorteo-badge {
     font-size: 0.7rem;

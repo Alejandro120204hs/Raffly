@@ -3,32 +3,52 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Rifa;
+use App\Models\User;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $premiosEntregados = Rifa::where('estado', 'finalizada')
+            ->get()
+            ->sum(fn($r) => (int) str_replace('.', '', $r->premio));
+
         $stats = [
-            'rifas_activas'      => 6,
-            'rifas_finalizadas'  => 14,
-            'usuarios'           => 238,
-            'premios_entregados' => 18500000,
+            'rifas_activas'      => Rifa::where('estado', 'activa')->count(),
+            'rifas_finalizadas'  => Rifa::where('estado', 'finalizada')->count(),
+            'usuarios'           => User::where('role', 'customer')->count(),
+            'premios_entregados' => $premiosEntregados,
         ];
 
-        $proximosSorteos = [
-            ['nombre' => 'iPhone 15 Pro Max 256GB',    'fecha' => '12 Jul 2026', 'vendidos' => 73, 'total' => 100],
-            ['nombre' => 'MacBook Pro M3 14"',          'fecha' => '20 Jul 2026', 'vendidos' => 36, 'total' => 80],
-            ['nombre' => 'PlayStation 5 + 3 Juegos',   'fecha' => '03 Jul 2026', 'vendidos' => 89, 'total' => 150],
-            ['nombre' => 'Smart TV Samsung 65" QLED',  'fecha' => '18 Jul 2026', 'vendidos' => 54, 'total' => 120],
-            ['nombre' => 'Bicicleta Eléctrica Premium','fecha' => '25 Jul 2026', 'vendidos' => 23, 'total' => 60],
-        ];
+        $proximosSorteos = Rifa::where('estado', 'activa')
+            ->orderBy('fecha')
+            ->take(5)
+            ->get()
+            ->map(function ($r) {
+                $total    = (int) pow(10, $r->cifras);
+                $tomados  = $r->numeros()->whereIn('estado', ['vendido', 'pendiente'])->count();
+                return [
+                    'nombre'   => $r->nombre,
+                    'loteria'  => $r->loteria,
+                    'fecha'    => Carbon::parse($r->fecha)->format('d M Y'),
+                    'vendidos' => $tomados,
+                    'total'    => $total,
+                ];
+            });
 
-        $ultimosGanadores = [
-            ['nombre' => 'Viaje a Cartagena x2',  'numero' => 47, 'premio' => 2800000],
-            ['nombre' => 'iPhone 14 Pro 128GB',   'numero' => 83, 'premio' => 2100000],
-            ['nombre' => 'Samsung Galaxy Tab S9', 'numero' => 12, 'premio' => 1400000],
-            ['nombre' => 'AirPods Pro 2da Gen',   'numero' => 65, 'premio' => 700000],
-        ];
+        $ultimosGanadores = Rifa::where('estado', 'finalizada')
+            ->whereNotNull('resultado')
+            ->orderBy('fecha', 'desc')
+            ->take(4)
+            ->get()
+            ->map(fn($r) => [
+                'nombre'  => $r->loteria,
+                'fecha'   => Carbon::parse($r->fecha)->format('d M Y'),
+                'numero'  => $r->resultado,
+                'premio'  => (int) str_replace('.', '', $r->premio),
+            ]);
 
         return view('admin.admin-dashboard', compact('stats', 'proximosSorteos', 'ultimosGanadores'));
     }

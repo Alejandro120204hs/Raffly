@@ -97,14 +97,17 @@
             <span class="panel-count">{{ count($proximosSorteos) }} activas</span>
         </div>
         <div class="panel-body">
-            @foreach($proximosSorteos as $rifa)
+            @forelse($proximosSorteos as $rifa)
             @php
-                $pct = round(($rifa['vendidos'] / $rifa['total']) * 100);
+                $pct    = $rifa['total'] > 0 ? round(($rifa['vendidos'] / $rifa['total']) * 100) : 0;
                 $status = $pct >= 80 ? 'hot' : ($pct >= 50 ? 'warm' : 'cool');
             @endphp
             <div class="sorteo-item">
                 <div class="sorteo-top">
-                    <span class="sorteo-nombre">{{ $rifa['nombre'] }}</span>
+                    <div>
+                        <span class="sorteo-nombre">{{ $rifa['nombre'] }}</span>
+                        <span class="sorteo-loteria">{{ $rifa['loteria'] }}</span>
+                    </div>
                     <span class="sorteo-badge sorteo-badge--{{ $status }}">
                         {{ $pct >= 80 ? '🔥 Casi lleno' : ($pct >= 50 ? '⚡ En curso' : '🎯 Disponible') }}
                     </span>
@@ -117,7 +120,12 @@
                     <div class="progreso-fill progreso-fill--{{ $status }}" style="width: {{ $pct }}%"></div>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="sorteo-empty">
+                <i class="fas fa-calendar-times"></i>
+                <p>No hay rifas activas en este momento.</p>
+            </div>
+            @endforelse
         </div>
     </div>
 
