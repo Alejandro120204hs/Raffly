@@ -1,0 +1,129 @@
+/* ═══════════════════════════════════════════════════════════════
+   Admin Responsive — Raffly
+   Orden correcto: de mayor a menor breakpoint.
+   El breakpoint más pequeño siempre gana (última regla = mayor peso).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Global: el admin-body nunca genera scroll horizontal de página ── */
+.admin-body { overflow-x: hidden; }
+
+/* ── 1200px: Ingresos KPI grid → 3 columnas ── */
+@media (max-width: 1200px) {
+    .ingresos-kpis { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── 1024px: Dashboard KPI grid → 2 columnas ── */
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── 900px: Perfil → 1 columna ── */
+@media (max-width: 900px) {
+    .profile-grid { grid-template-columns: 1fr; }
+}
+
+/* ── 768px: Layout móvil principal ── */
+@media (max-width: 768px) {
+    body { overflow-x: hidden; }
+
+    /* Sidebar */
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-close { display: flex; }
+    .sidebar-overlay.open { display: block; }
+
+    /* Layout */
+    .admin-body { margin-left: 0; max-width: 100vw; overflow-x: hidden; }
+    .topbar { left: 0; }
+    .topbar-toggle { display: flex; }
+    .user-info { display: none; }
+    .admin-content { padding: calc(var(--topbar-h) + 1rem) 1rem 1.5rem; }
+
+    /* Dashboard KPI grid → 2 columnas */
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-grid { grid-template-columns: 1fr; }
+
+    /* Ingresos KPI grid → 2 columnas + compactar cards */
+    .ingresos-kpis { grid-template-columns: repeat(2, 1fr); }
+    .ingreso-kpi { min-width: 0; padding: .875rem .75rem; gap: .5rem; }
+    .ingreso-kpi-icon { width: 36px; height: 36px; font-size: .95rem; flex-shrink: 0; }
+    .ingreso-kpi-val  { font-size: 1rem; }
+    .ingreso-kpi-sub  { font-size: .65rem; }
+
+    /* Ingresos: header del panel gráfico */
+    .panel-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .2rem;
+        padding: .875rem 1rem;
+    }
+    .panel-section-sub { margin-left: 0; }
+
+    /* Crear/Editar Rifa → 1 columna */
+    .create-layout { grid-template-columns: 1fr; }
+    .create-preview { position: static; }
+
+    /* Ver Detalle de Rifa → 1 columna */
+    .detail-layout { grid-template-columns: 1fr; }
+
+    /* Grid items: min-width:0 para que puedan encoger */
+    .detail-sidebar,
+    .detail-main,
+    .create-form,
+    .create-preview { min-width: 0; overflow: hidden; }
+
+    /* Rifa card */
+    .rifa-card { padding: 1rem; }
+    .rifa-card-premio-value { font-size: 1.15rem; word-break: break-word; }
+
+    /* Mini-KPIs */
+    .mini-kpi       { padding: .6rem .25rem; }
+    .mini-kpi-val   { font-size: .9rem; }
+    .mini-kpi-label { font-size: .6rem; }
+
+    /* Welcome banner → columna */
+    .welcome-banner { flex-direction: column; align-items: flex-start; gap: .625rem; padding: 1.25rem; }
+    .welcome-text h2 { font-size: 1.1rem; }
+    .welcome-date { align-self: flex-start; font-size: .75rem; padding: .4rem .875rem; }
+
+    /* Panels */
+    .panel { min-width: 0; }
+    .panel .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .panel .data-table { min-width: 700px; width: max-content; }
+    .panel-header { padding: 1rem; }
+
+    /* Filter tabs → wrap */
+    .filter-tabs { flex-wrap: wrap; }
+
+    /* Barra de búsqueda → ancho completo */
+    .toolbar-search { max-width: 100%; }
+
+    /* Paginación → columna */
+    .table-footer { flex-direction: column; align-items: center; gap: .5rem; padding: .75rem 1rem; }
+    .pagination    { flex-wrap: wrap; justify-content: center; }
+    .page-btn      { min-width: 28px; height: 28px; font-size: .75rem; padding: 0 .35rem; }
+
+    /* Sorteo items */
+    .sorteo-item { padding: .875rem 1rem; }
+
+    /* Ganador items */
+    .ganador-item   { gap: .5rem; padding: .75rem 1rem; }
+    .ganador-info   { min-width: 0; }
+    .ganador-rifa   { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ganador-premio { font-size: .8rem; }
+    .ganador-label  { font-size: .65rem; }
+}
+
+/* ── 500px: Ingresos KPI → 1 columna ── */
+@media (max-width: 500px) {
+    .ingresos-kpis { grid-template-columns: 1fr; }
+    .ingreso-kpi   { flex-direction: row; align-items: center; padding: .875rem 1rem; }
+    .ingreso-kpi-val { font-size: 1.2rem; }
+}
+
+/* ── 480px: Dashboard KPI → 1 columna ── */
+@media (max-width: 480px) {
+    .kpi-grid       { grid-template-columns: 1fr; }
+    .welcome-text h2 { font-size: 1rem; }
+    .ganador-item   { gap: .375rem; }
+}

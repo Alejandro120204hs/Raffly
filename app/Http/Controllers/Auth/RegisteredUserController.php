@@ -53,11 +53,12 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        session()->flash('sweet_alert', [
-            'type' => 'register',
-            'name' => $user->name,
+        session()->flash('bienvenida', [
+            'nombre'    => explode(' ', $user->name)[0],
+            'dashboard' => route('cliente.dashboard'),
+            'tipo'      => 'registro',
         ]);
 
-        return redirect(route('cliente.dashboard'));
+        return redirect()->route('bienvenida');
     }
 }

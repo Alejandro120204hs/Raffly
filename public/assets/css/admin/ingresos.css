@@ -235,13 +235,4 @@
     padding: .7rem .9rem;
 }
 
-/* ── Responsive ── */
-@media (max-width: 1200px) {
-    .ingresos-kpis { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 768px) {
-    .ingresos-kpis { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 500px) {
-    .ingresos-kpis { grid-template-columns: 1fr; }
-}
+/* ── Responsive — ver: responsive/admin-responsive.css ── */

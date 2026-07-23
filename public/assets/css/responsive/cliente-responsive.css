@@ -1,0 +1,60 @@
+/* ═══════════════════════════════════════════════════════════════
+   Cliente Responsive — Raffly
+   Orden correcto: de mayor a menor breakpoint.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Global: prevenir scroll horizontal de página ── */
+.cliente-body { overflow-x: hidden; }
+
+/* ── 768px: Layout móvil principal ── */
+@media (max-width: 768px) {
+    body { overflow-x: hidden; }
+
+    /* Sidebar */
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-close { display: flex; }
+    .sidebar-overlay.open { display: block; }
+
+    /* Layout */
+    .cliente-body { margin-left: 0; }
+    .topbar { left: 0; }
+    .topbar-toggle { display: flex; }
+    .user-info { display: none; }
+    .cliente-content { padding: calc(var(--topbar-h) + 1rem) 1rem 1.5rem; }
+    .page-header { margin-bottom: 1rem; }
+
+    /* rifa-detalle: header → columna */
+    .rd-header { flex-direction: column; align-items: flex-start; gap: .875rem; padding: 1rem; }
+    .rd-header-main { min-width: 0; width: 100%; }
+    .rd-header-premio { width: 100%; }
+    .rd-nombre { font-size: 1rem; word-break: break-word; }
+    .rd-meta { gap: .4rem .75rem; }
+
+    /* rifa-detalle: KPIs */
+    .rd-kpis { gap: .5rem; }
+
+    /* rifa-detalle: leyenda */
+    .rd-leyenda { gap: .5rem .875rem; padding: .75rem 1rem; }
+
+    /* rifa-detalle: panel de números */
+    .rd-numeros-panel { padding: 1rem; }
+    .rd-numeros-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
+    .rd-numeros-info { width: 100%; }
+    .rd-pagination { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: .2rem; }
+    .rd-page-btn { width: 28px; height: 28px; font-size: .72rem; }
+
+    /* rifa-detalle: grilla → 5 columnas que llenan el ancho completo */
+    .rd-numeros-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .4rem; }
+    .rd-num { width: 100%; height: 44px; font-size: .82rem; }
+
+    /* Lista de rifas → 1 columna */
+    .rifas-grid { grid-template-columns: 1fr; }
+}
+
+/* ── 480px: ajustes finos ── */
+@media (max-width: 480px) {
+    .rd-num { height: 40px; font-size: .78rem; }
+    .rd-page-btn { width: 26px; height: 26px; font-size: .68rem; }
+    .rd-kpi-val { font-size: 1.15rem; }
+}

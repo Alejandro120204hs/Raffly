@@ -7,9 +7,10 @@
     const VENDIDOS    = new Set(vendidos);
     const PENDIENTES  = new Set(pendientes);
     const COMPRADORES = compradores || {};   // { "5": { nombre, celular, ubicacion } }
-    const PER_PAGE   = 210;
-    const PAGINATED  = total > 100;
-    const CLIENTES   = clientes || [];
+    const IS_MOBILE   = window.innerWidth <= 768;
+    const PER_PAGE    = IS_MOBILE ? 64 : 210;
+    const PAGINATED   = total > 100;
+    const CLIENTES    = clientes || [];
 
     /* ── Modal registrar resultado ── */
     const btnRegistrar   = document.getElementById('btnRegistrarResultado');
@@ -53,7 +54,6 @@
         popupNum.textContent = String(n).padStart(cifras, '0');
         popup.dataset.n = n;
 
-        /* Mostrar "Ver comprador" solo si tiene datos */
         const currentState = overrides[n] ?? (VENDIDOS.has(n) ? 'sold' : PENDIENTES.has(n) ? 'pending' : 'free');
         verDetalleSection.style.display = (COMPRADORES[n] && currentState !== 'free') ? 'block' : 'none';
 
@@ -125,7 +125,6 @@
     const selectDepto       = document.getElementById('extDepartamento');
     const selectMunicipio   = document.getElementById('extMunicipio');
 
-    /* Poblar departamentos */
     const GEO = window.COLOMBIA_GEO || {};
     Object.keys(GEO).sort().forEach(dep => {
         const opt = document.createElement('option');
@@ -134,7 +133,6 @@
         selectDepto.appendChild(opt);
     });
 
-    /* Cascada departamento → municipio */
     selectDepto.addEventListener('change', () => {
         const dep  = selectDepto.value;
         const munis = GEO[dep] || [];
@@ -146,18 +144,16 @@
             selectMunicipio.appendChild(opt);
         });
         selectMunicipio.disabled = munis.length === 0;
-        /* Bogotá: auto-seleccionar el único municipio */
         if (munis.length === 1) {
             selectMunicipio.value = munis[0];
             selectMunicipio.disabled = true;
         }
     });
 
-    let pendingN     = null;   // número que se está configurando
-    let pendingState = null;   // 'pending' | 'sold'
+    let pendingN     = null;
+    let pendingState = null;
     let activeTab    = 'registrado';
 
-    /* Renderizar lista de clientes filtrada */
     function renderClientes(query) {
         const q = (query || '').toLowerCase();
         const filtered = CLIENTES.filter(c =>
@@ -190,7 +186,6 @@
         });
     }
 
-    /* Tab switching */
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             activeTab = btn.dataset.tab;
@@ -206,7 +201,6 @@
         });
     });
 
-    /* Filtro de búsqueda */
     if (buscarInput) {
         buscarInput.addEventListener('input', () => renderClientes(buscarInput.value));
     }
@@ -218,13 +212,11 @@
         const padded = String(n).padStart(cifras, '0');
         compradorNumLabel.textContent = padded;
 
-        /* Reset tabs → registrado */
         activeTab = 'registrado';
         tabBtns.forEach(b => b.classList.toggle('comprador-tab--active', b.dataset.tab === 'registrado'));
         tabRegistrado.style.display = 'flex';
         tabExterno.style.display    = 'none';
 
-        /* Reset campos */
         selectedUserIdEl.value = '';
         if (buscarInput) buscarInput.value = '';
         listaEl.querySelectorAll('.cliente-item').forEach(i => i.classList.remove('cliente-item--active'));
@@ -277,7 +269,7 @@
                     alert('Nombre, apellido y celular son obligatorios.');
                     return;
                 }
-                const depto    = selectDepto.value;
+                const depto     = selectDepto.value;
                 const municipio = selectMunicipio.value;
                 body.comprador_nombre    = nombre;
                 body.comprador_apellido  = apellido;
@@ -287,7 +279,6 @@
 
             closeModalComprador();
 
-            /* Actualizar COMPRADORES local para que el botón aparezca sin recargar */
             if (state !== 'free') {
                 if (activeTab === 'registrado') {
                     const uid  = selectedUserIdEl.value;
@@ -304,7 +295,6 @@
                 delete COMPRADORES[n];
             }
 
-            /* Actualizar UI */
             overrides[n] = state;
             const target = document.querySelector('.num-bubble[data-n="' + n + '"]');
             if (target) target.className = bubbleClass(n);
@@ -316,7 +306,6 @@
                 if (state === 'pending') flyerCell.classList.add('flyer-cell--pending');
             }
 
-            /* PATCH al servidor */
             if (updateUrl) {
                 fetch(updateUrl.replace('__NUM__', padded), {
                     method: 'PATCH',
@@ -338,7 +327,6 @@
             closePopup();
 
             if (state === 'free') {
-                /* Disponible: sin modal, guardar directo */
                 overrides[n] = state;
                 const target = document.querySelector('.num-bubble[data-n="' + n + '"]');
                 if (target) target.className = bubbleClass(n);
@@ -359,7 +347,6 @@
                     });
                 }
             } else {
-                /* Pendiente o vendido: abrir modal comprador */
                 openModalComprador(n, state);
             }
         });
@@ -370,6 +357,31 @@
             openPopup(this, parseInt(this.dataset.n));
         });
     }
+
+    /* ── Helpers de paginación (usados por 2, 3 y 4 cifras) ── */
+    function navBtn(html, disabled) {
+        const b     = document.createElement('button');
+        b.className = 'page-btn page-btn--nav' + (disabled ? ' page-btn--disabled' : '');
+        b.innerHTML = html;
+        b.disabled  = disabled;
+        return b;
+    }
+
+    function pageRange(current, tot, delta) {
+        const pages = [];
+        const left  = Math.max(2, current - delta);
+        const right = Math.min(tot - 1, current + delta);
+        pages.push(1);
+        if (left > 2)         pages.push('...');
+        for (let i = left; i <= right; i++) pages.push(i);
+        if (right < tot - 1)  pages.push('...');
+        if (tot > 1)          pages.push(tot);
+        return pages;
+    }
+
+    /* ── Estado de paginación móvil 2 cifras (accesible por el buscador) ── */
+    let mobilePage2  = 1;
+    let renderPage2  = null;
 
     /* ── Buscador ── */
     const input  = document.getElementById('numSearch');
@@ -408,6 +420,11 @@
             if (PAGINATED) {
                 const page = Math.floor(val / PER_PAGE) + 1;
                 if (page !== currentPage) { currentPage = page; renderGrid(); }
+                setTimeout(() => highlightBubble(val), 50);
+            } else if (IS_MOBILE && renderPage2) {
+                /* 2 cifras en móvil: navegar a la página correcta */
+                const page = Math.floor(val / 64) + 1;
+                if (page !== mobilePage2) { mobilePage2 = page; renderPage2(); }
                 setTimeout(() => highlightBubble(val), 50);
             } else {
                 highlightBubble(val);
@@ -448,9 +465,72 @@
     /* Enganchar bubbles PHP (2 cifras) */
     document.querySelectorAll('#numGrid .num-bubble').forEach(attachBubbleClick);
 
-    if (!PAGINATED) return;
+    if (!PAGINATED) {
+        /* ── Paginación móvil para grid de 2 cifras ── */
+        if (IS_MOBILE) {
+            const allBubbles    = Array.from(document.querySelectorAll('#numGrid .num-bubble'));
+            const panelBody     = document.getElementById('numGrid').closest('.panel-body');
+            const mobilePerPage = 64;
+            const mobileTotalPg = Math.ceil(allBubbles.length / mobilePerPage);
 
-    /* ── Grid paginado (3 y 4 cifras) ── */
+            /* Inyectar footer de paginación */
+            const footer = document.createElement('div');
+            footer.className = 'table-footer';
+            footer.innerHTML = '<span class="table-info" id="gridInfo"></span>'
+                             + '<div class="pagination" id="gridPagination"></div>';
+            panelBody.appendChild(footer);
+
+            const infoEl = document.getElementById('gridInfo');
+            const pagEl  = document.getElementById('gridPagination');
+
+            renderPage2 = function () {
+                const start = (mobilePage2 - 1) * mobilePerPage;
+                const end   = Math.min(start + mobilePerPage, allBubbles.length);
+
+                allBubbles.forEach((b, i) => {
+                    b.style.display = (i >= start && i < end) ? '' : 'none';
+                });
+
+                infoEl.textContent = 'Mostrando ' + String(start).padStart(cifras, '0')
+                    + ' – ' + String(end - 1).padStart(cifras, '0')
+                    + ' de ' + String(total - 1).padStart(cifras, '0');
+
+                pagEl.innerHTML = '';
+
+                const prev = navBtn('<i class="fas fa-chevron-left"></i>', mobilePage2 === 1);
+                prev.addEventListener('click', () => {
+                    if (mobilePage2 > 1) { mobilePage2--; renderPage2(); }
+                });
+                pagEl.appendChild(prev);
+
+                pageRange(mobilePage2, mobileTotalPg, 3).forEach(p => {
+                    if (p === '...') {
+                        const dots = document.createElement('span');
+                        dots.className   = 'page-dots';
+                        dots.textContent = '…';
+                        pagEl.appendChild(dots);
+                        return;
+                    }
+                    const b = document.createElement('button');
+                    b.className   = 'page-btn' + (p === mobilePage2 ? ' page-btn--active' : '');
+                    b.textContent = p;
+                    b.addEventListener('click', () => { mobilePage2 = p; renderPage2(); });
+                    pagEl.appendChild(b);
+                });
+
+                const next = navBtn('<i class="fas fa-chevron-right"></i>', mobilePage2 === mobileTotalPg);
+                next.addEventListener('click', () => {
+                    if (mobilePage2 < mobileTotalPg) { mobilePage2++; renderPage2(); }
+                });
+                pagEl.appendChild(next);
+            };
+
+            renderPage2();
+        }
+        return;
+    }
+
+    /* ── Grid paginado (3 y 4 cifras) — PER_PAGE ya es 64 en móvil ── */
     let currentPage  = 1;
     const grid       = document.getElementById('numGrid');
     const infoEl     = document.getElementById('gridInfo');
@@ -503,26 +583,6 @@
         const next = navBtn('<i class="fas fa-chevron-right"></i>', currentPage === totalPages);
         next.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; renderGrid(); } });
         pagEl.appendChild(next);
-    }
-
-    function navBtn(html, disabled) {
-        const b     = document.createElement('button');
-        b.className = 'page-btn page-btn--nav' + (disabled ? ' page-btn--disabled' : '');
-        b.innerHTML = html;
-        b.disabled  = disabled;
-        return b;
-    }
-
-    function pageRange(current, total, delta) {
-        const pages = [];
-        const left  = Math.max(2, current - delta);
-        const right = Math.min(total - 1, current + delta);
-        pages.push(1);
-        if (left > 2)          pages.push('...');
-        for (let i = left; i <= right; i++) pages.push(i);
-        if (right < total - 1) pages.push('...');
-        if (total > 1)         pages.push(total);
-        return pages;
     }
 
     renderGrid();

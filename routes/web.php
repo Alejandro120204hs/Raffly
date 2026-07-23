@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('home');
 
+Route::get('/bienvenida', function () {
+    if (!session('bienvenida')) {
+        return redirect('/');
+    }
+    return view('auth.bienvenida', session('bienvenida'));
+})->middleware('auth')->name('bienvenida');
+
 // Rutas del Administrador
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');

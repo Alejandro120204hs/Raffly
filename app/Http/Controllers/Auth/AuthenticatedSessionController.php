@@ -28,13 +28,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        session()->flash('sweet_alert', [
-            'type'  => 'login',
-            'name'  => Auth::user()->name,
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $dashboard = $user->isAdmin()
+            ? route('admin.dashboard')
+            : route('cliente.dashboard');
+
+        session()->flash('bienvenida', [
+            'nombre'    => explode(' ', Auth::user()->name)[0],
+            'dashboard' => $dashboard,
         ]);
 
-        $route = Auth::user()->isAdmin() ? 'admin.dashboard' : 'cliente.dashboard';
-        return redirect()->intended(route($route));
+        return redirect()->route('bienvenida');
 
     }
 

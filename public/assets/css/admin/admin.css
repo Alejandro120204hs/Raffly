@@ -746,47 +746,7 @@ body {
     gap: 0.5rem;
 }
 
-/* ─── Responsive ─── */
-
-@media (max-width: 1024px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-    .sidebar-close { display: flex; }
-
-    .sidebar-overlay.open { display: block; }
-
-    .admin-body {
-        margin-left: 0;
-    }
-
-    .topbar {
-        left: 0;
-    }
-
-    .topbar-toggle { display: flex; }
-
-    .user-info { display: none; }
-
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-
-    .dashboard-grid { grid-template-columns: 1fr; }
-
-    .admin-content { padding: calc(var(--topbar-h) + 1rem) 1rem 1.5rem; }
-}
-
-@media (max-width: 480px) {
-    .kpi-grid { grid-template-columns: 1fr; }
-}
+/* ─── Responsive — ver: responsive/admin-responsive.css ─── */
 
 /* ─── Profile ─── */
 
@@ -991,9 +951,7 @@ body {
     box-shadow: 0 6px 16px rgba(124,58,237,.35);
 }
 
-@media (max-width: 900px) {
-    .profile-grid { grid-template-columns: 1fr; }
-}
+/* Responsive: ver responsive/admin-responsive.css */
 
 /* ─── Page Header ─── */
 
@@ -2704,3 +2662,9 @@ body {
     align-items: center;
     gap: .5rem;
 }
+
+/* ── SweetAlert2 – Raffly theme ── */
+.raffly-swal-popup  { border-radius: 18px !important; font-family: 'Inter', sans-serif !important; }
+.raffly-swal-title  { font-size: 1.25rem !important; font-weight: 800 !important; color: #1E1B4B !important; }
+.raffly-swal-btn    { border-radius: 99px !important; font-weight: 700 !important; padding: .6rem 2rem !important; }
+.raffly-swal-bar    { background: #7C3AED !important; }

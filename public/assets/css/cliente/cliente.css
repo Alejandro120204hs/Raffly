@@ -462,34 +462,10 @@ body {
 }
 .btn-secondary:hover { background: var(--gray-200); }
 
-/* ─── Responsive ─── */
+/* ─── Responsive — ver: responsive/cliente-responsive.css ─── */
 
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-    .sidebar-close { display: flex; }
-
-    .sidebar-overlay.open { display: block; }
-
-    .cliente-body {
-        margin-left: 0;
-    }
-
-    .topbar {
-        left: 0;
-    }
-
-    .topbar-toggle { display: flex; }
-
-    .user-info { display: none; }
-
-    .cliente-content { padding: calc(var(--topbar-h) + 1rem) 1rem 1.5rem; }
-
-    .page-header { margin-bottom: 1rem; }
-}
+/* ── SweetAlert2 – Raffly theme ── */
+.raffly-swal-popup  { border-radius: 18px !important; font-family: 'Inter', sans-serif !important; }
+.raffly-swal-title  { font-size: 1.25rem !important; font-weight: 800 !important; color: #1E1B4B !important; }
+.raffly-swal-btn    { border-radius: 99px !important; font-weight: 700 !important; padding: .6rem 2rem !important; }
+.raffly-swal-bar    { background: #7C3AED !important; }
