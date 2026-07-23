@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restablecer contraseña – Raffly</title>
+<title>Restablecer contraseña – Rafflys</title>
 </head>
 <body style="margin:0;padding:0;background:#F1F5F9;font-family:'Segoe UI',Arial,sans-serif;">
 
@@ -15,7 +15,7 @@
         {{-- ── HEADER ── --}}
         <tr>
           <td style="background:linear-gradient(135deg,#1E1B4B 0%,#4C1D95 50%,#7C3AED 100%);border-radius:16px 16px 0 0;padding:36px 40px;text-align:center;">
-            <span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;">Raffly</span>
+            <span style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;">Rafflys</span>
             <p style="margin:12px 0 0;font-size:13px;color:rgba(255,255,255,.65);">La plataforma de rifas más confiable</p>
           </td>
         </tr>
@@ -41,7 +41,7 @@
               Hola, {{ $nombre }} 👋
             </h1>
             <p style="margin:0 0 24px;font-size:15px;color:#64748B;text-align:center;line-height:1.6;">
-              Recibimos una solicitud para restablecer la contraseña de tu cuenta en <strong>Raffly</strong>. Haz clic en el botón de abajo para crear una nueva.
+              Recibimos una solicitud para restablecer la contraseña de tu cuenta en <strong>Rafflys</strong>. Haz clic en el botón de abajo para crear una nueva.
             </p>
 
             {{-- Botón --}}
@@ -85,10 +85,10 @@
         {{-- ── FOOTER ── --}}
         <tr>
           <td style="background:#1E1B4B;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;">
-            <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#A78BFA;">Raffly</p>
+            <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#A78BFA;">Rafflys</p>
             <p style="margin:0;font-size:12px;color:rgba(255,255,255,.4);line-height:1.6;">
               Este correo fue enviado automáticamente. Por favor no respondas a este mensaje.<br>
-              © {{ date('Y') }} Raffly. Todos los derechos reservados.
+              © {{ date('Y') }} Rafflys. Todos los derechos reservados.
             </p>
           </td>
         </tr>

@@ -9,7 +9,7 @@
 <div class="welcome-banner">
     <div class="welcome-text">
         <h2>¡Bienvenido, {{ auth()->user()->name }}! 👋</h2>
-        <p>Aquí tienes el resumen de hoy en Raffly.</p>
+        <p>Aquí tienes el resumen de hoy en Rafflys.</p>
     </div>
     <div class="welcome-date">
         <i class="fas fa-calendar-alt"></i>

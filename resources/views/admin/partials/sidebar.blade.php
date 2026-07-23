@@ -3,7 +3,7 @@
     <div class="sidebar-brand">
         <a href="{{ route('admin.dashboard') }}" class="brand-link">
             
-            <span class="brand-name">Raffly</span>
+            <span class="brand-name">Rafflys</span>
         </a>
         <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar menú">
             <i class="fas fa-times"></i>

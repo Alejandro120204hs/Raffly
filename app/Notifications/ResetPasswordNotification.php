@@ -27,7 +27,7 @@ class ResetPasswordNotification extends Notification
         ], false));
 
         return (new MailMessage)
-            ->subject('Restablecer contraseña – Raffly')
+            ->subject('Restablecer contraseña – Rafflys')
             ->view('emails.reset-password', [
                 'url'      => $url,
                 'nombre'   => explode(' ', $notifiable->name)[0],

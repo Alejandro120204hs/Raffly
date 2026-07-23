@@ -266,7 +266,7 @@
     <div class="flyer-header">
         <div class="flyer-rays"></div>
         <div class="flyer-stars">✦ ✦ ✦</div>
-        <div class="flyer-title">Raffly</div>
+        <div class="flyer-title">Rafflys</div>
         
     </div>
 
@@ -300,7 +300,7 @@
     </div>
 
     <div class="flyer-footer">
-        <span class="flyer-footer-brand">⚡ Raffly</span>
+        <span class="flyer-footer-brand">⚡ Rafflys</span>
         <span class="flyer-footer-sub">rifas con confianza</span>
     </div>
 
