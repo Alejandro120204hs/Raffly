@@ -1,0 +1,238 @@
+/* ═══════════════════════════════════════
+   Raffly Admin – ingresos.css
+═══════════════════════════════════════ */
+
+/* ── KPIs ── */
+.ingresos-kpis {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.ingreso-kpi {
+    border-radius: var(--radius);
+    padding: 1.25rem 1.25rem 1.1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.ingreso-kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.ingreso-kpi--green  { background: #F0FDF4; border: 1.5px solid #BBF7D0; }
+.ingreso-kpi--green  .ingreso-kpi-icon { background: #DCFCE7; color: #16A34A; }
+.ingreso-kpi--green  .ingreso-kpi-val  { color: #16A34A; }
+
+.ingreso-kpi--rose   { background: #FFF1F2; border: 1.5px solid #FECDD3; }
+.ingreso-kpi--rose   .ingreso-kpi-icon { background: #FFE4E6; color: #E11D48; }
+.ingreso-kpi--rose   .ingreso-kpi-val  { color: #E11D48; }
+
+.ingreso-kpi--teal   { background: #F0FDFA; border: 1.5px solid #99F6E4; }
+.ingreso-kpi--teal   .ingreso-kpi-icon { background: #CCFBF1; color: #0D9488; }
+.ingreso-kpi--teal   .ingreso-kpi-val  { color: #0D9488; }
+
+.ingreso-kpi--amber  { background: #FFFBEB; border: 1.5px solid #FDE68A; }
+.ingreso-kpi--amber  .ingreso-kpi-icon { background: #FEF3C7; color: #D97706; }
+.ingreso-kpi--amber  .ingreso-kpi-val  { color: #D97706; }
+
+.ingreso-kpi--blue   { background: #EFF6FF; border: 1.5px solid #BFDBFE; }
+.ingreso-kpi--blue   .ingreso-kpi-icon { background: #DBEAFE; color: #2563EB; }
+.ingreso-kpi--blue   .ingreso-kpi-val  { color: #2563EB; }
+
+.ingreso-kpi--purple { background: var(--primary-light); border: 1.5px solid #C4B5FD; }
+.ingreso-kpi--purple .ingreso-kpi-icon { background: #DDD6FE; color: var(--primary); }
+.ingreso-kpi--purple .ingreso-kpi-val  { color: var(--primary); }
+
+.ingreso-kpi-body { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+.ingreso-kpi-val  { font-size: 1.35rem; font-weight: 800; line-height: 1.1; }
+.ingreso-kpi-label{ font-size: .82rem;  font-weight: 700; color: var(--gray-800); margin-top: .1rem; }
+.ingreso-kpi-sub  { font-size: .72rem;  color: var(--gray-400); }
+
+/* ── Panel header row ── */
+.ingresos-chart-panel { margin-bottom: 1.5rem; }
+
+.panel-header-row {
+    display: flex;
+    align-items: baseline;
+    gap: .75rem;
+    padding: 1rem 1.25rem .75rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+.panel-section-title {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+.panel-section-title i { color: var(--primary); font-size: .9rem; }
+.panel-section-sub { font-size: .78rem; color: var(--gray-400); margin-left: auto; }
+
+/* ── Gráfico de barras por mes ── */
+.mes-chart-wrap {
+    padding: 1.25rem 1.5rem 1rem;
+    overflow-x: auto;
+}
+
+.mes-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    height: 180px;
+    border-bottom: 2px solid var(--gray-200);
+    padding-bottom: 0;
+    min-width: max-content;
+    position: relative;
+}
+
+/* Líneas horizontales de guía */
+.mes-chart::before,
+.mes-chart::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    border-top: 1px dashed var(--gray-200);
+    pointer-events: none;
+}
+.mes-chart::before { top: 0; }
+.mes-chart::after  { top: 50%; }
+
+.mes-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4rem;
+    width: 72px;
+    flex-shrink: 0;
+    height: 100%;
+}
+
+.mes-val {
+    font-size: .68rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    white-space: nowrap;
+    text-align: center;
+    min-height: 1rem;
+}
+
+.mes-bar-wrap {
+    flex: 1;
+    width: 44px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.mes-bar {
+    width: 100%;
+    background: var(--primary);
+    border-radius: 6px 6px 0 0;
+    min-height: 4px;
+    transition: height .5s cubic-bezier(.4,0,.2,1);
+    position: relative;
+}
+.mes-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, rgba(255,255,255,.15), transparent);
+}
+
+.mes-label {
+    font-size: .72rem;
+    color: var(--gray-400);
+    font-weight: 600;
+    white-space: nowrap;
+    padding-top: .5rem;
+}
+
+/* ── Celdas de la tabla ── */
+.rifa-link {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    text-decoration: none;
+    color: inherit;
+}
+.rifa-link:hover .rifa-name { color: var(--primary); }
+
+.td-precio       { font-size: .82rem; font-weight: 600; color: var(--gray-600); }
+.td-vendidos     { font-size: .9rem;  font-weight: 700; color: var(--gray-800); }
+.td-total-small  { font-size: .75rem; color: var(--gray-400); }
+.td-recaudado    { font-size: .9rem;  font-weight: 800; color: #16A34A; }
+.td-premio-pago  { font-size: .85rem; font-weight: 700; color: #E11D48; }
+.td-ganancia-pos { font-size: .9rem;  font-weight: 800; color: #0D9488; }
+.td-ganancia-neg { font-size: .9rem;  font-weight: 800; color: #E11D48; }
+.td-porcobrar    { font-size: .85rem; font-weight: 700; color: #D97706; }
+.td-potencial    { font-size: .82rem; color: var(--gray-600); }
+
+/* ── Barra de avance en tabla ── */
+.td-avance {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    min-width: 100px;
+}
+.avance-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    overflow: hidden;
+}
+.avance-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 99px;
+}
+.avance-pct {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    min-width: 30px;
+    text-align: right;
+}
+
+/* ── Empty state ── */
+.td-empty-state {
+    text-align: center;
+    padding: 3rem 1rem !important;
+    color: var(--gray-400);
+}
+.td-empty-state i { font-size: 2rem; display: block; margin-bottom: .5rem; opacity: .4; }
+
+/* ── Contener tabla ancha sin scroll de página ── */
+.admin-content {
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.panel {
+    min-width: 0;
+}
+
+.panel .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Tabla más compacta para que quepa mejor */
+.panel .data-table th,
+.panel .data-table td {
+    padding: .7rem .9rem;
+}
+
+/* ── Responsive — ver: responsive/admin-responsive.css ── */

@@ -1,0 +1,173 @@
+/* ═══════════════════════════════════════
+   Raffly Cliente – rifas.css
+═══════════════════════════════════════ */
+
+/* ── Empty ── */
+.rf-empty {
+    padding: 3.5rem 1rem;
+    text-align: center;
+    color: var(--gray-400);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+}
+.rf-empty i  { font-size: 2.5rem; opacity: .3; }
+.rf-empty h3 { font-size: 1rem; font-weight: 700; color: var(--gray-600); }
+.rf-empty p  { font-size: .82rem; }
+
+/* ── Grid ── */
+.rifas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+/* ── Card ── */
+.rifa-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.rifa-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.10);
+}
+
+.rifa-card--participo {
+    border-color: #C4B5FD;
+    box-shadow: 0 0 0 2px rgba(124,58,237,.15);
+}
+
+/* ── Badge "Participas" ── */
+.rifa-card-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .4rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    border-bottom: 1px solid #C4B5FD;
+}
+
+/* ── Header ── */
+.rifa-card-header {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+    padding: 1.1rem 1.25rem .75rem;
+}
+
+.rifa-card-icon {
+    width: 46px; height: 46px;
+    background: var(--primary-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.rifa-card-nombre {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1.25;
+}
+
+.rifa-card-meta {
+    font-size: .72rem;
+    color: var(--gray-400);
+    margin-top: .15rem;
+    display: block;
+}
+
+/* ── Premio ── */
+.rifa-card-premio {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0 1.25rem .875rem;
+    padding: .5rem .75rem;
+    background: #FFFBEB;
+    border-radius: var(--radius-sm);
+    font-size: .8rem;
+    font-weight: 600;
+    color: #92400E;
+    border: 1px solid #FDE68A;
+}
+
+.rifa-card-premio i { color: #D97706; }
+
+/* ── Stats ── */
+.rifa-card-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.rifa-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: .75rem .5rem;
+    border-right: 1px solid var(--gray-200);
+}
+
+.rifa-stat:last-child { border-right: none; }
+
+.rifa-stat-val {
+    font-size: .85rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.rifa-stat-label {
+    font-size: .66rem;
+    color: var(--gray-400);
+    font-weight: 600;
+    margin-top: .2rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+/* ── Progreso ── */
+.rifa-card-prog {
+    padding: .875rem 1.25rem;
+}
+
+.prog-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: .4rem;
+}
+
+.prog-label { font-size: .72rem; color: var(--gray-400); font-weight: 600; }
+.prog-pct-label { font-size: .72rem; color: var(--primary); font-weight: 700; }
+
+.prog-bar-full {
+    height: 7px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.prog-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #A78BFA);
+    border-radius: 99px;
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Responsive — ver: responsive/cliente-responsive.css ── */

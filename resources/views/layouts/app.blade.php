@@ -62,7 +62,7 @@
             Swal.fire({
                 icon: 'success',
                 title: '¡Cuenta creada!',
-                html: '¡Bienvenido a Raffly, <strong>{{ $alert['name'] }}</strong>! Ya puedes participar en los sorteos.',
+                html: '¡Bienvenido a Rafflys, <strong>{{ $alert['name'] }}</strong>! Ya puedes participar en los sorteos.',
                 confirmButtonText: '¡Empezar!',
                 confirmButtonColor: '#F59E0B',
                 iconColor: '#F59E0B',

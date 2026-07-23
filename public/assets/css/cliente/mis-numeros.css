@@ -1,0 +1,655 @@
+/* ═══════════════════════════════════════
+   Raffly Cliente – mis-numeros.css
+═══════════════════════════════════════ */
+
+/* ── Barra superior ── */
+.mn-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.mn-top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-shrink: 0;
+}
+
+/* ── Toggle vista tarjetas / tabla ── */
+.mn-view-toggle {
+    display: flex;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.mn-view-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--white);
+    border: none;
+    cursor: pointer;
+    color: var(--gray-400);
+    font-size: .85rem;
+    transition: all var(--transition);
+    font-family: inherit;
+}
+
+.mn-view-btn:not(:last-child) { border-right: 1.5px solid var(--gray-200); }
+.mn-view-btn:hover { color: var(--primary); background: var(--primary-light); }
+.mn-view-btn.active { background: var(--primary); color: #fff; }
+
+/* ── Texto informativo ── */
+.mn-info-text {
+    font-size: .8rem;
+    color: var(--gray-400);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.mn-info-text i { color: var(--primary); flex-shrink: 0; font-size: .75rem; }
+
+/* ── Alerta global de pendientes ── */
+.mn-alert-pend {
+    display: flex;
+    align-items: flex-start;
+    gap: .875rem;
+    padding: 1rem 1.25rem;
+    background: #FFFBEB;
+    border: 1.5px solid #FDE68A;
+    border-radius: var(--radius);
+    margin-bottom: 1.1rem;
+}
+
+.mn-alert-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FEF3C7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #D97706;
+    font-size: .9rem;
+    flex-shrink: 0;
+    margin-top: .05rem;
+}
+
+.mn-alert-body {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+
+.mn-alert-body strong {
+    font-size: .88rem;
+    font-weight: 700;
+    color: #92400E;
+}
+
+.mn-alert-body span {
+    font-size: .8rem;
+    color: #B45309;
+}
+
+/* ── Tabs de filtro ── */
+.mn-tabs {
+    display: flex;
+    gap: .35rem;
+    margin-bottom: 1.1rem;
+    flex-wrap: wrap;
+}
+
+.mn-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5rem 1rem;
+    border-radius: 99px;
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    color: var(--gray-600);
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition);
+}
+
+.mn-tab:hover { border-color: var(--primary); color: var(--primary); }
+
+.mn-tab.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.mn-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 .35rem;
+    border-radius: 99px;
+    font-size: .7rem;
+    font-weight: 700;
+    background: rgba(255,255,255,.25);
+    color: inherit;
+}
+
+.mn-tab:not(.active) .mn-tab-count { background: var(--gray-100); color: var(--gray-600); }
+
+.mn-tab-count--win { background: #FDE68A; color: #92400E; }
+.mn-tab.active .mn-tab-count--win { background: rgba(255,255,255,.3); color: #fff; }
+
+.mn-rifa--hidden { display: none !important; }
+
+/* ── Empty ── */
+.mn-empty-full {
+    padding: 4rem 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+}
+
+.mn-empty-icon {
+    width: 72px; height: 72px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.75rem;
+    margin-bottom: .25rem;
+    opacity: .6;
+}
+
+.mn-empty-full h3 { font-size: 1.05rem; font-weight: 700; color: var(--gray-700, #374151); }
+.mn-empty-full p  { font-size: .83rem; color: var(--gray-400); }
+
+/* ── Tarjeta de rifa ── */
+.mn-rifa {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1.5px solid var(--gray-200);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Franja lateral de color */
+.mn-rifa-stripe {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--primary);
+    border-radius: 2px 0 0 2px;
+}
+
+.mn-rifa--finalizada .mn-rifa-stripe { background: var(--gray-400); }
+.mn-rifa--ganador    .mn-rifa-stripe { background: linear-gradient(180deg, #F59E0B, #D97706); }
+
+/* ── Header ── */
+.mn-rifa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem 1.1rem 1.5rem;
+    flex-wrap: wrap;
+}
+
+.mn-rifa-header-left {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+}
+
+.mn-rifa-ico {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.mn-rifa--finalizada .mn-rifa-ico { background: var(--gray-100); color: var(--gray-400); }
+.mn-rifa--ganador    .mn-rifa-ico { background: #FEF9C3; color: #D97706; }
+
+.mn-rifa-nombre {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    line-height: 1.2;
+}
+
+.mn-rifa-meta-row {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin-top: .25rem;
+    flex-wrap: wrap;
+}
+
+.mn-rifa-meta-item {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .75rem;
+    color: var(--gray-400);
+    font-weight: 500;
+}
+
+.mn-rifa-meta-item i { font-size: .68rem; }
+.mn-rifa-meta-sep { color: var(--gray-200); font-size: .75rem; }
+
+/* ── Badges ── */
+.mn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .75rem;
+    font-weight: 700;
+    padding: .3rem .8rem;
+    border-radius: 99px;
+    white-space: nowrap;
+}
+
+.mn-badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mn-badge--activa  { background: #DCFCE7; color: #16A34A; }
+.mn-badge--activa  .mn-badge-dot { background: #16A34A; animation: pulse-dot 1.5s infinite; }
+.mn-badge--final   { background: var(--gray-100); color: var(--gray-500, #6B7280); }
+.mn-badge--final   .mn-badge-dot { background: var(--gray-400); }
+.mn-badge--win     { background: #FEF9C3; color: #A16207; border: 1.5px solid #FDE68A; }
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+}
+
+/* ── Banner ganador ── */
+.mn-win-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 1.25rem 0 1.5rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid #FDE68A;
+    margin-bottom: .25rem;
+}
+
+.mn-win-trophy {
+    font-size: 2.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.mn-win-text {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+
+.mn-win-title {
+    font-size: .92rem;
+    font-weight: 800;
+    color: #92400E;
+}
+
+.mn-win-sub {
+    font-size: .8rem;
+    color: #B45309;
+}
+
+/* ── Banner finalizada sin ganar ── */
+.mn-fin-banner {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin: 0 1.25rem 0 1.5rem;
+    padding: .75rem 1rem;
+    background: var(--gray-100);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+    font-size: .8rem;
+    color: var(--gray-600);
+    margin-bottom: .25rem;
+}
+
+.mn-fin-banner i { color: var(--gray-400); font-size: .95rem; }
+
+/* ── Sección de números ── */
+.mn-numeros-section {
+    padding: 1rem 1.5rem 1.25rem;
+}
+
+.mn-numeros-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .75rem;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.mn-numeros-titulo {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--gray-400);
+}
+
+/* ── Tag de pendientes (inline, en el header de números) ── */
+.mn-pend-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #D97706;
+    background: #FEF9C3;
+    border: 1px solid #FDE68A;
+    border-radius: 99px;
+    padding: .2rem .65rem;
+}
+
+.mn-pend-tag i { font-size: .65rem; }
+
+.mn-numeros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+/* ── Leyenda mini (dentro de cada tarjeta) ── */
+.mn-ley-mini {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: .875rem;
+    flex-wrap: wrap;
+}
+
+.mn-ley-item {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .7rem;
+    font-weight: 600;
+    color: var(--gray-400);
+}
+
+.mn-ley-dot {
+    width: 9px; height: 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.mn-ley-item--pagado    .mn-ley-dot { background: #22C55E; }
+.mn-ley-item--pendiente .mn-ley-dot { background: #F59E0B; }
+.mn-ley-item--ganador   .mn-ley-dot { background: #F59E0B; border: 2px solid #D97706; box-shadow: 0 0 0 2px rgba(245,158,11,.3); }
+
+/* ── Chips de número ── */
+.mn-num {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    min-height: 52px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    padding: .5rem .25rem .4rem;
+    gap: .2rem;
+    transition: transform .15s ease, box-shadow .15s ease;
+    cursor: default;
+}
+
+.mn-num:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.mn-num-val {
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.mn-num-tag {
+    font-size: .65rem;
+    font-weight: 700;
+    line-height: 1;
+    color: inherit;
+}
+
+/* Vendido / pagado */
+.mn-num--vendido {
+    background: #F0FDF4;
+    border-color: #86EFAC;
+}
+.mn-num--vendido .mn-num-val { color: #16A34A; }
+
+/* Pendiente */
+.mn-num--pendiente {
+    background: #FFFBEB;
+    border-color: #FDE68A;
+}
+.mn-num--pendiente .mn-num-val { color: #D97706; }
+
+/* Ganador */
+.mn-num--win {
+    background: linear-gradient(135deg, #FEF9C3 0%, #FEF3C7 100%);
+    border-color: #F59E0B;
+    box-shadow: 0 0 0 3px rgba(245,158,11,.2), 0 2px 8px rgba(245,158,11,.25);
+}
+.mn-num--win .mn-num-val { color: #D97706; font-size: 1.1rem; }
+.mn-num--win .mn-num-tag { color: #D97706; }
+
+/* ══════════════════════════════════════
+   VISTA TABLA
+══════════════════════════════════════ */
+.mn-tabla-panel {
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+}
+
+.mn-tabla-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mn-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+}
+
+.mn-tabla thead tr {
+    background: var(--gray-100);
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.mn-tabla th {
+    padding: .75rem 1rem;
+    text-align: left;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-400);
+    white-space: nowrap;
+}
+
+.mn-tabla tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+    transition: background var(--transition);
+}
+
+.mn-tabla tbody tr:last-child { border-bottom: none; }
+.mn-tabla tbody tr:hover { background: #FAFAFE; }
+
+.mn-tabla-row--win { background: linear-gradient(90deg, #FFFEF0, var(--white)); }
+.mn-tabla-row--win:hover { background: #FFFBEB; }
+
+tr.mn-rifa--hidden { display: none; }
+
+.mn-tabla td {
+    padding: .875rem 1rem;
+    vertical-align: middle;
+}
+
+.mn-td-nombre {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.mn-td-ico {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .85rem;
+    flex-shrink: 0;
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.mn-td-ico--fin { background: var(--gray-100); color: var(--gray-400); }
+.mn-td-ico--win { background: #FEF9C3; color: #D97706; }
+
+.mn-td-nombre span {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.mn-td-sub {
+    font-size: .8rem;
+    color: var(--gray-400);
+    white-space: nowrap;
+}
+
+.mn-td-nums {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+}
+
+.mn-td-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .2rem;
+    min-width: 36px;
+    height: 28px;
+    border-radius: 7px;
+    border: 1.5px solid transparent;
+    font-size: .8rem;
+    font-weight: 800;
+    padding: 0 .4rem;
+    white-space: nowrap;
+}
+
+.mn-td-num.mn-num--vendido   { background: #F0FDF4; border-color: #86EFAC; color: #16A34A; }
+.mn-td-num.mn-num--pendiente { background: #FFFBEB; border-color: #FDE68A; color: #D97706; }
+.mn-td-num.mn-num--win       { background: linear-gradient(135deg,#FEF9C3,#FEF3C7); border-color: #F59E0B; color: #D97706; box-shadow: 0 0 0 2px rgba(245,158,11,.15); }
+.mn-td-num.mn-num--win i     { font-size: .6rem; }
+
+.mn-td-premio {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    white-space: nowrap;
+}
+
+.mn-td-resultado {
+    font-size: .9rem;
+    font-weight: 800;
+    color: var(--gray-700);
+}
+
+.mn-td-resultado--win { color: #D97706; }
+.mn-td-empty { color: var(--gray-300); }
+
+/* ── Paginación ── */
+.mn-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: .875rem 1.25rem;
+    border-top: 1px solid var(--gray-100);
+}
+
+.mn-page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    color: var(--gray-600);
+    font-size: .8rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition);
+}
+
+.mn-page-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.mn-page-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+.mn-page-info {
+    font-size: .82rem;
+    color: var(--gray-400);
+    min-width: 90px;
+    text-align: center;
+}
+
+.mn-page-info strong { color: var(--gray-700); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .mn-rifa-header { padding: .875rem 1rem .875rem 1.25rem; }
+    .mn-numeros-section { padding: .875rem 1rem 1rem; }
+    .mn-win-banner, .mn-fin-banner { margin: 0 1rem; }
+    .mn-num { width: 58px; min-height: 46px; }
+    .mn-alert-pend { padding: .875rem 1rem; }
+}
