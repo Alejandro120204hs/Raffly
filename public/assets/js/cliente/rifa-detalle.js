@@ -10,13 +10,14 @@
     var toastMsg   = document.getElementById('rdToastMsg');
     var csrf       = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    var PER_PAGE     = 90;
+    var IS_MOBILE    = window.innerWidth <= 768;
+    var PER_PAGE     = IS_MOBILE ? 50 : 90;
     var paginaActual = 1;
     var numeroSeleccionado = null;
 
     var todos        = Array.from(document.querySelectorAll('.rd-num'));
     var total        = todos.length;
-    var paginado     = total > 100;
+    var paginado     = total > PER_PAGE;
     var totalPaginas = Math.ceil(total / PER_PAGE);
 
     /* ── Paginación ──────────────────────────────── */

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/cliente/cliente.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive/cliente-responsive.css') }}">
 </head>
 <body>
 

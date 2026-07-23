@@ -170,7 +170,4 @@
     transition: width .6s cubic-bezier(.4,0,.2,1);
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
-    .rifas-grid { grid-template-columns: 1fr; }
-}
+/* ── Responsive — ver: responsive/cliente-responsive.css ── */
