@@ -147,7 +147,7 @@
         <div class="early-wrap fade-up">
             <div class="badge badge-purple"><i class="fas fa-star"></i> Acceso Anticipado</div>
             <h2 class="section-title">Sé de los <span class="gold">Primeros</span> en Participar</h2>
-            <p class="section-sub">Únete a Raffly y disfruta de una experiencia fácil, segura y transparente. Regístrate gratis y recibe novedades sobre nuevos sorteos, promociones y oportunidades para participar.</p>
+            <p class="section-sub">Únete a Rafflys y disfruta de una experiencia fácil, segura y transparente. Regístrate gratis y recibe novedades sobre nuevos sorteos, promociones y oportunidades para participar.</p>
 
             <div class="early-perks">
                 <div class="early-perk">
